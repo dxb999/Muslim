@@ -62,9 +62,6 @@
       border-radius: 10px;
       box-shadow: 0 0 10px #ccc;
     }
-    .reminder-box h2 {
-      margin-top: 0;
-    }
     .reminder-box button {
       background-color: #ffc107;
       border: none;
@@ -106,14 +103,32 @@
       border-radius: 10px;
       box-shadow: 0 0 10px #ccc;
     }
-    .final-judgment-box button {
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
+    .judgment-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+      gap: 30px;
+    }
+    .judgment-column {
+      width: 100px;
+      text-align: center;
+    }
+    .judgment-meter {
+      width: 40px;
+      height: 200px;
+      background-color: #ddd;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    #judgmentIndicator {
+      position: absolute;
+      width: 100%;
+      height: 0%;
+      bottom: 0;
+      background: linear-gradient(to top, #dc3545, #ffc107, #4caf50);
+      transition: height 0.5s ease-in-out;
     }
   </style>
 </head>
@@ -157,8 +172,18 @@
 
   <div class="final-judgment-box">
     <h2>🌌 الجزاء النهائي</h2>
-    <p id="judgmentResult">⬅️ أدخل أعمالك لترى مصيرك النهائي...</p>
-    <button onclick="showFinalJudgment()">احسب المصير</button>
+    <div class="judgment-container">
+      <div class="judgment-column">
+        <h3>🌴 الجنة</h3>
+      </div>
+      <div class="judgment-meter">
+        <div id="judgmentIndicator"></div>
+      </div>
+      <div class="judgment-column">
+        <h3>🔥 النار</h3>
+      </div>
+    </div>
+    <p id="judgmentResult">⬅️ يتم حساب المصير تلقائيًا حسب أعمالك...</p>
   </div>
 
   <script>
@@ -182,8 +207,7 @@
           badTotal -= points;
           document.getElementById('badTotal').textContent = badTotal;
         }
-        updateNetResult();
-        updateGraveMeter();
+        updateAll();
       };
       list.appendChild(li);
 
@@ -194,11 +218,16 @@
         badTotal += points;
         document.getElementById('badTotal').textContent = badTotal;
       }
-      updateNetResult();
-      updateGraveMeter();
 
       document.getElementById(`${type}Desc`).value = '';
       document.getElementById(`${type}Points`).value = '';
+      updateAll();
+    }
+
+    function updateAll() {
+      updateNetResult();
+      updateGraveMeter();
+      autoUpdateFinalJudgment();
     }
 
     function updateNetResult() {
@@ -243,21 +272,36 @@
       progressBar.style.width = level + "%";
     }
 
-    function showFinalJudgment() {
+    function autoUpdateFinalJudgment() {
       const result = document.getElementById("judgmentResult");
+      const indicator = document.getElementById("judgmentIndicator");
       const net = goodTotal - badTotal;
+      let heightPercent = 50;
 
-      if (net > 50) {
-        result.textContent = "🥇 مبارك! مصيرك الجنة بإذن الله 🌴";
+      if (net > 100) {
+        result.textContent = "🥇 أعمالك عظيمة، وجهتك الجنة بإذن الله!";
+        heightPercent = 100;
+      } else if (net > 50) {
+        result.textContent = "🌿 مصيرك الجنة إن شاء الله، واصل الثبات.";
+        heightPercent = 80;
       } else if (net > 0) {
-        result.textContent = "🤲 على الطريق الصحيح، واصل العمل الصالح!";
+        result.textContent = "🤲 على الطريق، واصل العمل الصالح.";
+        heightPercent = 65;
       } else if (net === 0) {
-        result.textContent = "⚖️ تعادل الحساب، الرحمة وحدها تُنجي.";
+        result.textContent = "⚖️ تعادل الحساب، فكن من المستغفرين.";
+        heightPercent = 50;
       } else if (net > -30) {
-        result.textContent = "❗ خطر! تب إلى الله، لازال الأمل موجودًا.";
+        result.textContent = "❗ خطر! راجع نفسك قبل فوات الأوان.";
+        heightPercent = 35;
+      } else if (net > -70) {
+        result.textContent = "🔥 تسارع نحو الخطر، بادر بالتوبة.";
+        heightPercent = 20;
       } else {
-        result.textContent = "🔥 والعياذ بالله، مصيرك النار إن لم تتب.";
+        result.textContent = "🚫 مصيرك النار إن لم تتب، اللهم سلم!";
+        heightPercent = 5;
       }
+
+      indicator.style.height = heightPercent + "%";
     }
 
     const goodActions = [
@@ -331,7 +375,7 @@
 
     window.onload = () => {
       populateDropdowns();
-      updateGraveMeter();
+      updateAll();
     };
   </script>
 </body>
