@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>ميزان أعمالي</title>
+  <style>
+    body {
+      font-family: 'Tahoma';
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #2e7d32;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .column {
+      background-color: white;
+      padding: 20px;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .column h2 {
+      margin-top: 0;
+    }
+    input, button, select {
+      padding: 8px;
+      margin: 5px;
+      width: 80%;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+    li {
+      margin-bottom: 5px;
+      background-color: #e0f2f1;
+      padding: 8px;
+      border-radius: 5px;
+    }
+    .summary {
+      margin-top: 30px;
+      font-size: 1.2em;
+      color: #333;
+    }
+    .reminder-box {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 20px;
+      margin: 40px auto 20px;
+      width: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .reminder-box h2 {
+      margin-top: 0;
+    }
+    .reminder-box button {
+      background-color: #ffc107;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .grave-meter-box {
+      background-color: #fdecea;
+      color: #611a15;
+      border: 1px solid #f5c6cb;
+      padding: 20px;
+      margin: 30px auto;
+      width: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .progress-container {
+      background-color: #f8d7da;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 25px;
+      margin: 10px 0;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #dc3545;
+      transition: width 0.5s ease-in-out;
+    }
+    .final-judgment-box {
+      background-color: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+      padding: 20px;
+      margin: 30px auto;
+      width: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    .final-judgment-box button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>📖 ميزان أعمالي</h1>
+  <div class="container">
+    <div class="column" id="good">
+      <h2>✅ الحسنات</h2>
+      <input type="text" id="goodDesc" placeholder="وصف العمل" />
+      <input type="number" id="goodPoints" placeholder="الدرجة" />
+      <ul id="goodList"></ul>
+      <strong>المجموع: <span id="goodTotal">0</span></strong>
+    </div>
+
+    <div class="column" id="bad">
+      <h2>❌ السيئات</h2>
+      <input type="text" id="badDesc" placeholder="وصف العمل" />
+      <input type="number" id="badPoints" placeholder="الدرجة" />
+      <ul id="badList"></ul>
+      <strong>المجموع: <span id="badTotal">0</span></strong>
+    </div>
+  </div>
+
+  <div class="summary">
+    ⚖️ الفارق = <span id="netResult">0</span> نقطة
+  </div>
+
+  <div class="reminder-box">
+    <h2>☠️ عذاب القبر – تذكير وتحذير</h2>
+    <p id="reminderText">اضغط على الزر لتتذكر الآخرة...</p>
+    <button onclick="showReminder()">ذكرني اليوم</button>
+  </div>
+
+  <div class="grave-meter-box">
+    <h2>📉 عداد عذاب القبر</h2>
+    <div class="progress-container">
+      <div id="graveProgress" class="progress-bar"></div>
+    </div>
+    <p id="graveLevel">المستوى: آمن</p>
+  </div>
+
+  <div class="final-judgment-box">
+    <h2>🌌 الجزاء النهائي</h2>
+    <p id="judgmentResult">⬅️ أدخل أعمالك لترى مصيرك النهائي...</p>
+    <button onclick="showFinalJudgment()">احسب المصير</button>
+  </div>
+
+  <script>
+    let goodTotal = 0;
+    let badTotal = 0;
+
+    function addEntry(type) {
+      const desc = document.getElementById(`${type}Desc`).value;
+      const points = parseInt(document.getElementById(`${type}Points`).value);
+      if (!desc || isNaN(points)) return;
+
+      const list = document.getElementById(`${type}List`);
+      const li = document.createElement('li');
+      li.textContent = `${desc} (${points} نقطة)`;
+      li.onclick = () => {
+        list.removeChild(li);
+        if (type === 'good') {
+          goodTotal -= points;
+          document.getElementById('goodTotal').textContent = goodTotal;
+        } else {
+          badTotal -= points;
+          document.getElementById('badTotal').textContent = badTotal;
+        }
+        updateNetResult();
+        updateGraveMeter();
+      };
+      list.appendChild(li);
+
+      if (type === 'good') {
+        goodTotal += points;
+        document.getElementById('goodTotal').textContent = goodTotal;
+      } else {
+        badTotal += points;
+        document.getElementById('badTotal').textContent = badTotal;
+      }
+      updateNetResult();
+      updateGraveMeter();
+
+      document.getElementById(`${type}Desc`).value = '';
+      document.getElementById(`${type}Points`).value = '';
+    }
+
+    function updateNetResult() {
+      const net = goodTotal - badTotal;
+      document.getElementById('netResult').textContent = net;
+    }
+
+    function showReminder() {
+      const reminders = [
+        "كان عثمان بن عفان إذا ذُكر القبر بكى حتى تبتل لحيته.",
+        "القبر أول منازل الآخرة، فإن نجا منه فما بعده أيسر.",
+        "أكثروا من ذكر هادم اللذات: الموت.",
+        "اللهم قِنا عذاب القبر، وثبّتنا عند السؤال.",
+        "استعدوا للقبر، فإن الليل والنهار يعملان فيكم."
+      ];
+      const text = reminders[Math.floor(Math.random() * reminders.length)];
+      document.getElementById('reminderText').textContent = text;
+    }
+
+    function updateGraveMeter() {
+      const levelText = document.getElementById("graveLevel");
+      const progressBar = document.getElementById("graveProgress");
+      let level = 0;
+
+      if (badTotal <= 10) {
+        level = 10;
+        levelText.textContent = "المستوى: آمن";
+      } else if (badTotal <= 30) {
+        level = 30;
+        levelText.textContent = "المستوى: تحذير بسيط";
+      } else if (badTotal <= 60) {
+        level = 60;
+        levelText.textContent = "المستوى: خطر متوسط ⚠️";
+      } else if (badTotal <= 90) {
+        level = 90;
+        levelText.textContent = "المستوى: اقتراب من العذاب 😟";
+      } else {
+        level = 100;
+        levelText.textContent = "المستوى: 🔥 شديد الخطر – تب قبل فوات الأوان";
+      }
+
+      progressBar.style.width = level + "%";
+    }
+
+    function showFinalJudgment() {
+      const result = document.getElementById("judgmentResult");
+      const net = goodTotal - badTotal;
+
+      if (net > 50) {
+        result.textContent = "🥇 مبارك! مصيرك الجنة بإذن الله 🌴";
+      } else if (net > 0) {
+        result.textContent = "🤲 على الطريق الصحيح، واصل العمل الصالح!";
+      } else if (net === 0) {
+        result.textContent = "⚖️ تعادل الحساب، الرحمة وحدها تُنجي.";
+      } else if (net > -30) {
+        result.textContent = "❗ خطر! تب إلى الله، لازال الأمل موجودًا.";
+      } else {
+        result.textContent = "🔥 والعياذ بالله، مصيرك النار إن لم تتب.";
+      }
+    }
+
+    const goodActions = [
+      { text: "صلاة الفجر في وقتها", points: 20 },
+      { text: "الصدقة على محتاج", points: 15 },
+      { text: "قراءة القرآن", points: 10 },
+      { text: "بر الوالدين", points: 25 },
+      { text: "الابتسامة في وجه أخيك", points: 5 },
+      { text: "الاستغفار 100 مرة", points: 12 },
+      { text: "قيام الليل", points: 18 }
+    ];
+
+    const badActions = [
+      { text: "الكذب", points: 10 },
+      { text: "النميمة", points: 15 },
+      { text: "ترك الصلاة", points: 25 },
+      { text: "إيذاء الآخرين", points: 12 },
+      { text: "سماع الحرام", points: 8 },
+      { text: "نظر محرم", points: 7 },
+      { text: "الغيبة", points: 15 }
+    ];
+
+    function populateDropdowns() {
+      const goodSelect = document.createElement("select");
+      goodSelect.id = "goodSelect";
+      goodSelect.innerHTML = '<option value="">اختر عملًا حسنًا</option>';
+      goodActions.forEach(action => {
+        const option = document.createElement("option");
+        option.value = action.points;
+        option.textContent = `${action.text} (+${action.points})`;
+        goodSelect.appendChild(option);
+      });
+
+      const goodBtn = document.createElement("button");
+      goodBtn.textContent = "إضافة";
+      goodBtn.onclick = () => {
+        const selected = goodSelect.options[goodSelect.selectedIndex];
+        if (selected.value) {
+          document.getElementById("goodDesc").value = selected.textContent;
+          document.getElementById("goodPoints").value = selected.value;
+          addEntry('good');
+        }
+      };
+
+      const badSelect = document.createElement("select");
+      badSelect.id = "badSelect";
+      badSelect.innerHTML = '<option value="">اختر عملًا سيئًا</option>';
+      badActions.forEach(action => {
+        const option = document.createElement("option");
+        option.value = action.points;
+        option.textContent = `${action.text} (-${action.points})`;
+        badSelect.appendChild(option);
+      });
+
+      const badBtn = document.createElement("button");
+      badBtn.textContent = "إضافة";
+      badBtn.onclick = () => {
+        const selected = badSelect.options[badSelect.selectedIndex];
+        if (selected.value) {
+          document.getElementById("badDesc").value = selected.textContent;
+          document.getElementById("badPoints").value = selected.value;
+          addEntry('bad');
+        }
+      };
+
+      document.getElementById("good").appendChild(goodSelect);
+      document.getElementById("good").appendChild(goodBtn);
+      document.getElementById("bad").appendChild(badSelect);
+      document.getElementById("bad").appendChild(badBtn);
+    }
+
+    window.onload = () => {
+      populateDropdowns();
+      updateGraveMeter();
+    };
+  </script>
+</body>
+</html>
