@@ -32,35 +32,37 @@
   .miti-buttons button{padding:10px 14px;border:none;border-radius:8px;background:#1976d2;color:#fff;cursor:pointer}
   .miti-note{margin-top:8px;font-size:.95em}
 
-  /* إنفوجرافيك الأسباب (قسمان) */
+  /* إنفوجرافيك الأسباب */
   .infobox{background:#fff;border:1px solid #eaeaea;color:#1b1b1b;padding:20px;margin:22px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
   .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   @media(max-width:820px){.two-cols{grid-template-columns:1fr}}
   .infosec{border:1px dashed #ebebeb;border-radius:10px;padding:12px}
   .infosec h3{margin:0 0 10px}
-  .infogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;justify-items:center}
+  .infogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;justify-items:center}
+  .sec-actions{margin-top:8px}
+  .sec-actions button{padding:8px 12px;border:none;border-radius:8px;background:#555;color:#fff;cursor:pointer}
 
-  /* الدائرة الكبيرة (عرض الخط = 30) */
-  .reason{width:180px;height:220px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;user-select:none}
-  .ringwrap{position:relative;width:160px;height:160px}
+  /* الدائرة الكبيرة */
+  .reason{width:140px;height:170px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none}
+  .ringwrap{position:relative;width:140px;height:140px}
   .ringwrap .inner{
-    position:absolute;inset:28px; /* نصف السماكة (15) + مسافة أمان */
-    border-radius:50%;background:#fff;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:6px;text-align:center;
+    position:absolute;inset:28px;border-radius:50%;background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;
     box-shadow:0 2px 8px rgba(0,0,0,.06);
   }
-  .inner .icon{font-size:36px;line-height:1}
-  .inner .title{font-size:15px;color:#222}
-  .inner .times{font-size:13px;color:#666}
+  .inner .icon{font-size:30px;line-height:1}
+  .inner .title{font-size:14px;color:#222}
+  .inner .times{font-size:12px;color:#666}
 
+  /* عدّاد صغير */
   .count{position:absolute;bottom:-8px;right:-8px;background:#2e7d32;color:#fff;font-size:12px;border-radius:14px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
   .bad .count{background:#dc3545}
 
-  /* SVG حلقة التقدم — سماكة 30 + تدرج + لمعة */
+  /* SVG حلقة التقدم — سماكة 30 + Glow */
   .svg{transform:rotate(-90deg)}
-  .track{stroke:#eee;stroke-width:30;fill:none}
+  .track{stroke:#e5e5e5;stroke-width:30;fill:none}
   .prog-good{stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(46,125,50,.6))}
-  .prog-bad{ stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
+  .prog-bad {stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
 
   /* الجزاء النهائي */
   .final-judgment-box{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9;padding:20px;margin:22px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
@@ -127,12 +129,15 @@
       <div class="infosec">
         <h3>🌴 أسباب دخول الجنة</h3>
         <div class="infogrid" id="reasonsGoodGrid"></div>
+        <div class="sec-actions"><button onclick="resetSection('good')">تصفير الجنة</button></div>
       </div>
       <div class="infosec">
         <h3>🔥 أسباب دخول النار</h3>
         <div class="infogrid" id="reasonsBadGrid"></div>
+        <div class="sec-actions"><button onclick="resetSection('bad')">تصفير النار</button></div>
       </div>
     </div>
+    <div style="margin-top:8px;font-size:.9em;color:#666">💾 يتم الحفظ تلقائيًا.</div>
   </div>
 
   <!-- الجزاء النهائي -->
@@ -217,9 +222,8 @@
     document.getElementById('judgmentResult').textContent=txt;
   }
 
-  /* ===== الإنفوجرافيك (20 ضغطة، عرض الخط = 30 مع تدرج ولمعة) ===== */
+  /* ===== الإنفوجرافيك (20 ضغطة) — عرض 30 + تدرّج + Glow + حفظ تلقائي + تصفير ===== */
   const MAX_CLICKS = 20;
-
   const REASONS_GOOD=[
     {id:'iman',icon:'🕋',label:'الإيمان',points:25},
     {id:'salah',icon:'🕌',label:'الصلاة',points:20},
@@ -236,18 +240,30 @@
     {id:'riba',icon:'💸',label:'الربا',points:25},
     {id:'namimahR',icon:'🗣️',label:'النميمة',points:15}
   ];
-  const clicks={}; // id -> count
+
+  const clicks = {}; // {id: count}
 
   function gradientStops(type){
-    return type==='bad'
-      ? ['#dc3545','#ff7043']   // أحمر إلى برتقالي
-      : ['#2e7d32','#66bb6a']; // أخضر داكن إلى فاتح
+    return type==='bad' ? ['#dc3545','#ff7043'] : ['#2e7d32','#66bb6a'];
+  }
+
+  function saveClicks(){
+    localStorage.setItem('reasons_good', JSON.stringify(REASONS_GOOD.map(r=>({id:r.id,count:clicks[r.id]||0}))));
+    localStorage.setItem('reasons_bad',  JSON.stringify(REASONS_BAD.map(r=>({id:r.id,count:clicks[r.id]||0}))));
+  }
+
+  function loadClicks(){
+    try{
+      const g = JSON.parse(localStorage.getItem('reasons_good')||'[]');
+      const b = JSON.parse(localStorage.getItem('reasons_bad')||'[]');
+      return {good:g, bad:b};
+    }catch{ return {good:[],bad:[]}; }
   }
 
   function createReasonEl(r,type,grid){
     clicks[r.id]=0;
 
-    const size=160, r0=60, cx=size/2, cy=size/2, C=2*Math.PI*r0;
+    const size=140, r0=50, cx=size/2, cy=size/2, C=2*Math.PI*r0;
     const gradId=`grad_${type}_${r.id}`;
 
     const wrap=document.createElement('div');
@@ -256,7 +272,6 @@
 
     const ringwrap=document.createElement('div'); ringwrap.className='ringwrap';
 
-    // SVG مع تدرج
     const [c1,c2]=gradientStops(type);
     ringwrap.innerHTML=`
       <svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
@@ -271,7 +286,8 @@
                 id="prog_${r.id}"
                 cx="${cx}" cy="${cy}" r="${r0}"
                 stroke="url(#${gradId})"
-                stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}" stroke-linecap="round"></circle>
+                stroke-linecap="round"
+                stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}"></circle>
       </svg>
     `;
 
@@ -288,25 +304,28 @@
     ringwrap.appendChild(count);
     wrap.appendChild(ringwrap);
 
-    // تفاعل الضغط
+    function setVisual(countVal){
+      const pct = countVal / MAX_CLICKS;
+      const offset = C * (1 - pct);
+      const prog = document.getElementById('prog_'+r.id);
+      prog.style.strokeDashoffset = offset;
+      document.getElementById('t_'+r.id).textContent = countVal;
+      count.textContent = countVal+'×';
+    }
+
     wrap.onclick=()=>{
       if(clicks[r.id] >= MAX_CLICKS) return;
       clicks[r.id]++;
 
-      const pct = clicks[r.id] / MAX_CLICKS;
-      const offset = C * (1 - pct);
-      const prog = document.getElementById('prog_'+r.id);
-      prog.style.strokeDashoffset = offset;
-
-      document.getElementById('t_'+r.id).textContent = clicks[r.id];
-      count.textContent = clicks[r.id]+'×';
-
       if(type==='good'){ goodTotal += r.points; document.getElementById('goodTotal').textContent=goodTotal; }
       else { badTotal  += r.points; document.getElementById('badTotal').textContent=badTotal; }
 
+      setVisual(clicks[r.id]);
+      saveClicks();
       updateAll();
     };
 
+    wrap._meta = {setVisual};
     grid.appendChild(wrap);
   }
 
@@ -317,8 +336,53 @@
     REASONS_BAD.forEach(r=>createReasonEl(r,'bad',bGrid));
   }
 
+  /* استرجاع الحالة المحفوظة */
+  function restoreFromStorage(){
+    const saved = loadClicks();
+    goodTotal = 0; badTotal = 0;
+
+    function applySaved(list, type, defs){
+      list.forEach(({id,count})=>{
+        const el = document.getElementById('reason_'+id);
+        const def = defs.find(d=>d.id===id);
+        if(!el || !def) return;
+        const c = Math.min(MAX_CLICKS, Math.max(0, parseInt(count)||0));
+        clicks[id] = c;
+        if(el._meta) el._meta.setVisual(c);
+        if(type==='good') goodTotal += def.points * c;
+        else badTotal += def.points * c;
+      });
+    }
+
+    applySaved(saved.good||[], 'good', REASONS_GOOD);
+    applySaved(saved.bad||[],  'bad',  REASONS_BAD);
+
+    document.getElementById('goodTotal').textContent = goodTotal;
+    document.getElementById('badTotal').textContent = badTotal;
+    updateAll();
+  }
+
+  /* تصفير قسم */
+  function resetSection(type){
+    const defs = (type==='good') ? REASONS_GOOD : REASONS_BAD;
+    defs.forEach(def=>{
+      const el = document.getElementById('reason_'+def.id);
+      const curr = clicks[def.id]||0;
+      if(curr>0){
+        if(type==='good'){ goodTotal -= def.points*curr; if(goodTotal<0) goodTotal=0; }
+        else { badTotal -= def.points*curr; if(badTotal<0) badTotal=0; }
+        clicks[def.id]=0;
+        if(el && el._meta) el._meta.setVisual(0);
+      }
+    });
+    document.getElementById('goodTotal').textContent = goodTotal;
+    document.getElementById('badTotal').textContent = badTotal;
+    saveClicks();
+    updateAll();
+  }
+
   // تشغيل
-  window.onload=()=>{ renderReasons(); updateAll(); };
+  window.onload=()=>{ renderReasons(); restoreFromStorage(); };
 </script>
 </body>
 </html>
