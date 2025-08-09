@@ -116,31 +116,35 @@
     }
     .infobox h2{margin:0 0 12px}
     .infogrid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
       gap:16px;justify-items:center;align-items:center;margin-top:10px;
     }
+
+    /* بطاقة السبب بدائرة SVG */
     .reason{
-      width:90px;height:90px;position:relative;border-radius:50%;
-      display:grid;place-items:center;cursor:pointer;user-select:none;
-      transition:transform .1s ease;
+      width:120px;height:140px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none
     }
-    .reason:active{transform:scale(.97)}
-    .reason .ring{
-      position:absolute;inset:0;border-radius:50%;
-      background:conic-gradient(#ddd 0deg,#ddd 360deg);
-      box-shadow:inset 0 0 0 8px #f5f5f5;
+    .ringwrap{position:relative;width:120px;height:120px}
+    .ringwrap .inner{
+      position:absolute;inset:28px;border-radius:50%;background:#fff;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
     }
-    .reason .inner{
-      position:absolute;inset:8px;border-radius:50%;
-      background:#ffffff;display:grid;place-items:center;padding:6px;text-align:center;
-    }
-    .reason .icon{font-size:22px;line-height:1}
-    .reason .label{font-size:12px;margin-top:4px;color:#333}
-    .reason .count{
+    .inner .icon{font-size:24px;line-height:1}
+    .inner .label{font-size:12px;color:#333}
+    .inner .times{font-size:11px;color:#666}
+
+    .count{
       position:absolute;bottom:-6px;right:-6px;background:#2e7d32;color:#fff;
       font-size:11px;border-radius:12px;padding:2px 6px;box-shadow:0 2px 6px rgba(0,0,0,.15)
     }
-    .reason.bad .count{background:#dc3545}
+    .bad .count{background:#dc3545}
+
+    /* SVG: سماكة 30 + تدرّج + لمعة */
+    .svg{transform:rotate(-90deg)}
+    .track{stroke:#e5e5e5;stroke-width:30;fill:none}
+    .prog-good{stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(46,125,50,.6))}
+    .prog-bad {stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
 
     /* الجزاء النهائي */
     .final-judgment-box {
@@ -442,7 +446,7 @@
       document.getElementById("bad").appendChild(badBtn);
     }
 
-    /* ==== إنفوجرافيك الأسباب ==== */
+    /* ==== إنفوجرافيك الأسباب — SVG بسماكة 30 + Gradient + Glow ==== */
     const REASONS = [
       // أسباب الجنة
       { id:'iman',     type:'good', icon:'🕋', label:'الإيمان',        points:25 },
@@ -461,61 +465,99 @@
     ];
     const reasonClicks = {}; REASONS.forEach(r=>reasonClicks[r.id]=0);
 
-    function renderReasons(){
+    function gradientStops(type){
+      return type==='bad' ? ['#dc3545','#ff7043'] : ['#2e7d32','#66bb6a'];
+    }
+
+    function createReason(r){
       const grid = document.getElementById('reasonsGrid');
-      REASONS.forEach(r=>{
-        const wrap = document.createElement('div');
-        wrap.className = 'reason ' + (r.type==='bad'?'bad':'good');
-        wrap.id = 'reason_'+r.id;
+      const wrap = document.createElement('div');
+      wrap.className = 'reason ' + (r.type==='bad'?'bad':'good');
+      wrap.id = 'reason_'+r.id;
 
-        const ring  = document.createElement('div'); ring.className='ring';
-        const inner = document.createElement('div'); inner.className='inner';
-        const icon  = document.createElement('div'); icon.className='icon'; icon.textContent=r.icon;
-        const label = document.createElement('div'); label.className='label'; label.textContent=r.label;
-        const count = document.createElement('div'); count.className='count'; count.textContent='0×';
+      const ringwrap = document.createElement('div'); ringwrap.className='ringwrap';
 
-        inner.appendChild(icon); inner.appendChild(label);
-        wrap.appendChild(ring);  wrap.appendChild(inner); wrap.appendChild(count);
+      // SVG إعداد
+      const size=120, r0=36, cx=size/2, cy=size/2, C=2*Math.PI*r0;
+      const gradId=`grad_${r.type}_${r.id}`;
+      const [c1,c2]=gradientStops(r.type);
 
-        wrap.onclick = ()=> onReasonClick(r.id);
-        grid.appendChild(wrap);
-        updateReasonVisual(r.id);
-      });
+      ringwrap.innerHTML = `
+        <svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <defs>
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"  stop-color="${c1}"></stop>
+              <stop offset="100%" stop-color="${c2}"></stop>
+            </linearGradient>
+          </defs>
+          <circle class="track" cx="${cx}" cy="${cy}" r="${r0}"></circle>
+          <circle class="${r.type==='bad'?'prog-bad':'prog-good'}"
+                  id="prog_${r.id}"
+                  cx="${cx}" cy="${cy}" r="${r0}"
+                  stroke="url(#${gradId})"
+                  stroke-linecap="round"
+                  stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}"></circle>
+        </svg>
+      `;
+
+      const inner = document.createElement('div'); inner.className='inner';
+      inner.innerHTML = `
+        <div class="icon">${r.icon}</div>
+        <div class="label">${r.label}</div>
+        <div class="times"><span id="t_${r.id}">0</span>×</div>
+      `;
+
+      const badge = document.createElement('div'); badge.className='count'; badge.textContent='0×';
+
+      ringwrap.appendChild(inner);
+      ringwrap.appendChild(badge);
+      wrap.appendChild(ringwrap);
+
+      wrap.onclick = ()=> onReasonClick(r.id, C);
+
+      grid.appendChild(wrap);
     }
 
-    function updateReasonVisual(id){
-      const clicks = reasonClicks[id];
-      const el = document.getElementById('reason_'+id);
-      if(!el) return;
-      const reason = REASONS.find(x=>x.id===id);
-      const color = (reason?.type==='bad') ? '#dc3545' : '#2e7d32';
-      const pct = Math.max(0, Math.min(100, clicks*20)); // كل ضغطة 20% حتى 100%
-      const deg = pct * 3.6;
-      el.querySelector('.ring').style.background =
-        `conic-gradient(${color} ${deg}deg, #ddd ${deg}deg 360deg)`;
-      el.querySelector('.count').textContent = clicks + '×';
+    function updateReasonVisual(id, C){
+      const c = reasonClicks[id];
+      const prog = document.getElementById('prog_'+id);
+      if(!prog) return;
+      const maxClicks = 5; // نفس منطقك السابق: كل ضغطة 20% (5 ضغطات = 100%)
+      const pct = Math.min(1, c / maxClicks);
+      const offset = C * (1 - pct);
+      prog.style.strokeDashoffset = offset;
+
+      const t = document.getElementById('t_'+id);
+      if(t) t.textContent = c;
+      const card = document.getElementById('reason_'+id);
+      if(card){ const b = card.querySelector('.count'); if(b) b.textContent = c+'×'; }
     }
 
-    function onReasonClick(id){
-      const r = REASONS.find(x=>x.id===id);
-      if(!r) return;
+    function onReasonClick(id, C){
+      const def = REASONS.find(x=>x.id===id);
+      if(!def) return;
 
-      reasonClicks[id] += 1;   // يمكن جعل حد أعلى 5 إن أحببت
-      if(r.type==='good'){
-        goodTotal += r.points;
-        document.getElementById('goodTotal').textContent = goodTotal;
-      } else {
-        badTotal  += r.points;
-        document.getElementById('badTotal').textContent  = badTotal;
-      }
-      updateReasonVisual(id);
+      reasonClicks[id] = (reasonClicks[id]||0) + 1;
+      if(def.type==='good'){ goodTotal += def.points; document.getElementById('goodTotal').textContent = goodTotal; }
+      else { badTotal += def.points; document.getElementById('badTotal').textContent = badTotal; }
+
+      updateReasonVisual(id, C);
       updateAll();
+    }
+
+    function renderReasons(){
+      REASONS.forEach(def=>createReason(def));
+      // بعد الإنشاء الأولى: اضبط المؤشرات على 0
+      REASONS.forEach(def=>{
+        const size=120, r0=36, C=2*Math.PI*r0;
+        updateReasonVisual(def.id, C);
+      });
     }
 
     /* تشغيل */
     window.onload = () => {
       populateDropdowns();
-      renderReasons();  // رسم الإنفوجرافيك
+      renderReasons();
       updateAll();
     };
   </script>
