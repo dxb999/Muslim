@@ -6,69 +6,53 @@
 <title>ميزان أعمالي</title>
 <style>
   :root{
-    --green:#2e7d32;
-    --card:#ffffff;
-    --bg:#f3f5f6;
-    --shadow:0 8px 18px rgba(0,0,0,.06);
+    --green:#2e7d32; --card:#ffffff; --bg:#f3f5f6; --shadow:0 8px 18px rgba(0,0,0,.06);
     --muted:#7d8b92;
     --warn-bg:#ffefc2; --warn-border:#f9d46a; --warn-text:#8a6d1c;
     --grave-bg:#fde5e8; --grave-border:#f6bfc7; --grave-text:#651b22; --grave-fill:#e05263; --grave-track:#f6cbd1;
     --final-bg:#e7f4e9; --final-border:#cbe7d2; --final-text:#1e5a31;
     --btn:#ffb300; --btn-text:#1b1b1b;
+    --miti-bg:#e9f2ff; --miti-border:#cfe3ff; --miti-text:#0f3b79; --miti-btn:#1976d2; --miti-btn-text:#fff;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#111;
-    -webkit-tap-highlight-color: transparent;
-  }
+  body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:#111;-webkit-tap-highlight-color:transparent}
   .page{max-width:980px;margin:18px auto;padding:0 14px}
   h1{margin:6px 0 14px;text-align:center;color:var(--green);font-size:22px}
-  .grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:16px;
-  }
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:740px){.grid{grid-template-columns:1fr}}
-  .card{
-    background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px
-  }
+  .card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px}
   .card h2{margin:0 0 10px;font-size:18px}
-  .ok{color:#1e7e34} .bad{color:#d32f2f}
+  .ok{color:#1e7e34}.bad{color:#d32f2f}
   .field{display:flex;flex-direction:column;gap:8px;margin:8px 0}
-  input,select,button{
-    width:100%;padding:10px 12px;border:1px solid #e5e8ea;border-radius:10px;font-size:15px;background:#fff
-  }
+  input,select,button{width:100%;padding:10px 12px;border:1px solid #e5e8ea;border-radius:10px;font-size:15px;background:#fff}
   button{background:var(--btn);color:var(--btn-text);border:none;font-weight:600;cursor:pointer}
   .total{margin-top:8px;color:#111;font-weight:700}
   ul{margin:10px 0 0;padding:0;list-style:none;max-height:170px;overflow:auto}
   li{background:#e8f7f4;border:1px solid #cce8e1;border-radius:10px;padding:8px 10px;margin-bottom:8px;cursor:pointer}
   .muted{color:var(--muted);font-size:13px}
+  .summary{margin:14px 0;text-align:center;color:#111;font-weight:700}
 
-  /* summary line */
-  .summary{
-    margin:14px 0;text-align:center;color:#111;font-weight:700
-  }
-
-  /* reminder (yellow) */
   .rem{background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn-text)}
   .rem h3{margin:0 0 8px;font-size:16px}
   .rem p{margin:0 0 10px}
 
-  /* grave meter (pink) */
   .grave{background:var(--grave-bg);border:1px solid var(--grave-border);color:var(--grave-text)}
   .grave h3{margin:0 0 8px;font-size:16px}
   .bar-track{height:14px;background:var(--grave-track);border-radius:999px;overflow:hidden}
   .bar-fill{height:100%;width:0;background:var(--grave-fill);transition:width .35s ease}
 
-  /* final (green) */
+  .miti{background:var(--miti-bg);border:1px solid var(--miti-border);color:var(--miti-text)}
+  .miti h3{margin:0 0 8px;font-size:16px}
+  .miti .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .miti .btns button{background:var(--miti-btn);color:var(--miti-btn-text);border:none;width:auto}
+
   .final{background:var(--final-bg);border:1px solid var(--final-border);color:var(--final-text)}
   .final h3{margin:0 0 8px;font-size:16px;text-align:center}
   .meter-wrap{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:6px}
   .col{width:80px;text-align:center;font-weight:700}
   .tube{width:42px;height:190px;background:#e0e0e0;border-radius:999px;position:relative;overflow:hidden}
-  .tube .indicator{
-    position:absolute;left:0;right:0;bottom:0;height:0%;
-    background:linear-gradient(to top,#e05263,#f1b24a,#48b163);
-    transition:height .35s ease;
-  }
+  .tube .indicator{position:absolute;left:0;right:0;bottom:0;height:0%;
+    background:linear-gradient(to top,#e05263,#f1b24a,#48b163);transition:height .35s ease}
   .final .note{text-align:center;margin-top:8px}
 </style>
 </head>
@@ -76,17 +60,15 @@
   <div class="page">
     <h1>📖 ميزان أعمالي</h1>
 
-    <!-- الحسنات / السيئات -->
+    <!-- السيئات / الحسنات -->
     <div class="grid">
       <div class="card" id="badCard">
         <h2 class="bad">السيئات ❌</h2>
         <div class="field">
           <input id="badDesc" type="text" placeholder="وصف العمل"/>
           <input id="badPoints" type="number" placeholder="الدرجة"/>
-          <div class="muted">اختر عملًا سيئًا:</div>
-          <select id="badSelect">
-            <option value="">— اختر عملاً سيئًا —</option>
-          </select>
+          <div class="muted">اختر عملاً سيئًا:</div>
+          <select id="badSelect"><option value="">— اختر عملاً سيئًا —</option></select>
           <button onclick="addFromSelect('bad')">إضافة</button>
         </div>
         <div class="total">المجموع: <span id="badTotal">0</span></div>
@@ -100,9 +82,7 @@
           <input id="goodDesc" type="text" placeholder="وصف العمل"/>
           <input id="goodPoints" type="number" placeholder="الدرجة"/>
           <div class="muted">اختر عملاً حسنًا:</div>
-          <select id="goodSelect">
-            <option value="">— اختر عملاً حسنًا —</option>
-          </select>
+          <select id="goodSelect"><option value="">— اختر عملاً حسنًا —</option></select>
           <button onclick="addFromSelect('good')">إضافة</button>
         </div>
         <div class="total">المجموع: <span id="goodTotal">0</span></div>
@@ -127,6 +107,18 @@
       <div id="graveLevel" style="margin-top:8px">المستوى: آمن</div>
     </div>
 
+    <!-- تخفيف الخطر -->
+    <div class="card miti" style="margin-top:12px">
+      <h3>🛡️ تخفيف الخطر (مرة كل 24 ساعة لكل خيار)</h3>
+      <div class="btns">
+        <button onclick="applyMitigation('tawba')">توبة نصوح</button>
+        <button onclick="applyMitigation('surahMulk')">سورة الملك</button>
+        <button onclick="applyMitigation('repayDebt')">سداد دين/رد مظلمة</button>
+        <button onclick="applyMitigation('cutNamimah')">قطع النميمة</button>
+      </div>
+      <div id="mitigationNote" class="muted" style="margin-top:6px">اختر إجراءً عند ارتفاع الخطر.</div>
+    </div>
+
     <!-- الجزاء النهائي -->
     <div class="card final" style="margin-top:12px">
       <h3>🌌 الجزاء النهائي</h3>
@@ -140,71 +132,71 @@
   </div>
 
 <script>
-  /* قوائم جاهزة مطابقة للمنطق السابق */
+  /* بيانات جاهزة */
   const goodActions = [
-    { text: "صلاة الفجر في وقتها", points: 20 },
-    { text: "الصدقة على محتاج", points: 15 },
-    { text: "قراءة القرآن", points: 10 },
-    { text: "بر الوالدين", points: 25 },
-    { text: "الاستغفار 100 مرة", points: 12 },
-    { text: "قيام الليل", points: 18 },
-    { text: "صلة الرحم", points: 16 }
+    { text:"صلاة الفجر في وقتها",points:20 },
+    { text:"الصدقة على محتاج",points:15 },
+    { text:"قراءة القرآن",points:10 },
+    { text:"بر الوالدين",points:25 },
+    { text:"الاستغفار 100 مرة",points:12 },
+    { text:"قيام الليل",points:18 },
+    { text:"صلة الرحم",points:16 }
   ];
   const badActions = [
-    { text: "النميمة (نقل الكلام للإفساد)", points: 15 },
-    { text: "عدم الاستنزاه من البول", points: 15 },
-    { text: "الكذب المنتشر المؤذي", points: 20 },
-    { text: "الزنا", points: 40 },
-    { text: "ترك العمل بالقرآن/هجره بعد معرفته", points: 25 },
-    { text: "الغلول/أخذ مال عام بغير حق", points: 30 },
-    { text: "الدَّين مع المماطلة والقدرة على السداد", points: 20 }
+    { text:"النميمة (نقل الكلام للإفساد)",points:15 },
+    { text:"عدم الاستنزاه من البول",points:15 },
+    { text:"الكذب المنتشر المؤذي",points:20 },
+    { text:"الزنا",points:40 },
+    { text:"ترك العمل بالقرآن/هجره بعد معرفته",points:25 },
+    { text:"الغلول/أخذ مال عام بغير حق",points:30 },
+    { text:"الدَّين مع المماطلة والقدرة على السداد",points:20 }
   ];
 
-  let goodTotal = 0, badTotal = 0;
+  let goodTotal=0, badTotal=0;
 
-  /* تعبئة القوائم */
+  /* معاملات التخفيف */
+  const K_GOOD = 0.6; // وزن تأثير الحسنات
+  const MITIGATION_POINTS = { tawba:25, surahMulk:10, repayDebt:35, cutNamimah:20 };
+  let mitigationTotal = 0;
+
+  /* تهيئة القوائم */
   function populate(){
-    const g = document.getElementById('goodSelect');
+    const g=document.getElementById('goodSelect');
     goodActions.forEach(a=>{const o=document.createElement('option');o.value=a.points;o.textContent=`${a.text} (+${a.points})`;g.appendChild(o);});
-    const b = document.getElementById('badSelect');
+    const b=document.getElementById('badSelect');
     badActions.forEach(a=>{const o=document.createElement('option');o.value=a.points;o.textContent=`${a.text} (-${a.points})`;b.appendChild(o);});
   }
 
-  /* إضافة من القائمة */
   function addFromSelect(type){
-    const sel = document.getElementById(type==='good'?'goodSelect':'badSelect');
+    const sel=document.getElementById(type==='good'?'goodSelect':'badSelect');
     if(!sel.value) return;
     document.getElementById(type+'Desc').value   = sel.options[sel.selectedIndex].textContent;
     document.getElementById(type+'Points').value = sel.value;
-    addEntry(type);
-    sel.selectedIndex = 0;
+    addEntry(type); sel.selectedIndex=0;
   }
 
-  /* إضافة/حذف بند */
   function addEntry(type){
-    const desc = (document.getElementById(type+'Desc').value||'').trim();
-    const pts  = parseInt(document.getElementById(type+'Points').value,10);
+    const desc=(document.getElementById(type+'Desc').value||'').trim();
+    const pts=parseInt(document.getElementById(type+'Points').value,10);
     if(!desc || isNaN(pts)) return;
 
-    const ul = document.getElementById(type+'List');
-    const li = document.createElement('li');
-    li.textContent = `${desc} (${pts} نقطة)`;
-    li.onclick = ()=>{ ul.removeChild(li); if(type==='good'){goodTotal-=pts}else{badTotal-=pts}; updateAll(); };
+    const ul=document.getElementById(type+'List');
+    const li=document.createElement('li');
+    li.textContent=`${desc} (${pts} نقطة)`;
+    li.onclick=()=>{ ul.removeChild(li); if(type==='good'){goodTotal-=pts}else{badTotal-=pts}; updateAll(); };
     ul.appendChild(li);
 
-    if(type==='good') goodTotal += pts; else badTotal += pts;
+    if(type==='good') goodTotal+=pts; else badTotal+=pts;
     document.getElementById(type+'Desc').value=''; document.getElementById(type+'Points').value='';
     updateAll();
   }
 
-  /* ملخّص الفارق */
-  function updateNet(){
-    document.getElementById('netResult').textContent = (goodTotal - badTotal);
-  }
+  function updateAll(){ updateNet(); updateGrave(); updateFinal(); }
 
-  /* تذكير */
+  function updateNet(){ document.getElementById('netResult').textContent = (goodTotal - badTotal); }
+
   function showReminder(){
-    const arr = [
+    const arr=[
       "كان عثمان بن عفان إذا ذُكر القبر بكى حتى تبتل لحيته.",
       "القبر أول منازل الآخرة، فإن نجا منه فما بعده أيسر.",
       "أكثروا من ذكر هادم اللذات: الموت.",
@@ -214,36 +206,65 @@
     document.getElementById('reminderText').textContent = arr[Math.floor(Math.random()*arr.length)];
   }
 
-  /* عدّاد عذاب القبر (مبسّط على السيئات فقط) */
+  /* التخفيف: مرة كل 24 ساعة لكل خيار */
+  function canUseMitigation(key){
+    const t=localStorage.getItem('miti_'+key);
+    if(!t) return true;
+    const hrs=(Date.now()-parseInt(t,10))/(1000*60*60);
+    return hrs>=24;
+  }
+  function markMitigationUsed(key){ localStorage.setItem('miti_'+key, Date.now().toString()); }
+
+  function applyMitigation(key){
+    const note=document.getElementById('mitigationNote');
+    if(!MITIGATION_POINTS[key]) return;
+    if(!canUseMitigation(key)){ note.textContent="⏳ تم استخدام هذا الخيار خلال آخر 24 ساعة."; return; }
+    mitigationTotal += MITIGATION_POINTS[key];
+    markMitigationUsed(key);
+    note.textContent="✅ تم التخفيف. اثبت على الطاعة واترك أسباب الخطر.";
+    updateAll();
+  }
+
+  /* حساب خطر القبر مع التخفيف: 0..100 */
+  function computeGraveRisk(){
+    let risk = badTotal - K_GOOD*goodTotal - mitigationTotal;
+    if(risk<0) risk=0; if(risk>100) risk=100;
+    return Math.round(risk);
+  }
+
   function updateGrave(){
-    const risk = Math.min(100, Math.max(0, badTotal));  // 0..100
+    const risk=computeGraveRisk();
     document.getElementById('graveFill').style.width = risk + '%';
 
-    let label = "آمن";
+    let label="آمن";
     if(risk>10 && risk<=30) label="تحذير بسيط";
     else if(risk>30 && risk<=60) label="خطر متوسط ⚠️";
     else if(risk>60) label="اقتراب من العذاب 😟";
     document.getElementById('graveLevel').textContent = 'المستوى: ' + label;
+
+    // اقتراح تلقائي
+    const note=document.getElementById('mitigationNote');
+    if(risk>60) note.textContent="🚨 خطر مرتفع! توبة نصوح + سداد دين/رد مظلمة.";
+    else if(risk>30) note.textContent="⚠️ خطر متوسط. أوصِي بقراءة سورة الملك وقطع سبب المعصية.";
+    else note.textContent="ممتاز. داوم على الطاعات ونظّف صحيفتك.";
   }
 
-  /* الجزاء النهائي — مؤشر رأسي */
+  /* الجزاء النهائي — المؤشر الرأسي */
   function updateFinal(){
     const net = goodTotal - badTotal;
-    let h = 50, txt = "تعادل الحساب، فكن من المستغفرين ⚖️";
-    if(net>100){h=100; txt="🥇 أعمالك عظيمة، وجهتك الجنة بإذن الله!";}
-    else if(net>50){h=80; txt="🌿 مصيرك الجنة إن شاء الله، واصل الثبات.";}
-    else if(net>0){h=65; txt="🤲 على الطريق، واصل العمل الصالح.";}
-    else if(net===0){h=50; txt="تعادل الحساب، فكن من المستغفرين ⚖️";}
-    else if(net>-30){h=35; txt="❗ خطر! راجع نفسك قبل فوات الأوان.";}
-    else if(net>-70){h=20; txt="🔥 تسارع نحو الخطر، بادر بالتوبة.";}
-    else {h=5; txt="🚫 مصيرك النار إن لم تتب، اللهم سلم!";}
+    let h=50, txt="تعادل الحساب، فكن من المستغفرين ⚖️";
+    if(net>100){h=100;txt="🥇 أعمالك عظيمة، وجهتك الجنة بإذن الله!";}
+    else if(net>50){h=80;txt="🌿 مصيرك الجنة إن شاء الله، واصل الثبات.";}
+    else if(net>0){h=65;txt="🤲 على الطريق، واصل العمل الصالح.";}
+    else if(net===0){h=50;txt="تعادل الحساب، فكن من المستغفرين ⚖️";}
+    else if(net>-30){h=35;txt="❗ خطر! راجع نفسك قبل فوات الأوان.";}
+    else if(net>-70){h=20;txt="🔥 تسارع نحو الخطر، بادر بالتوبة.";}
+    else {h=5;txt="🚫 مصيرك النار إن لم تتب، اللهم سلم!";}
     document.getElementById('finalIndicator').style.height = h + '%';
     document.getElementById('finalNote').textContent = txt;
   }
 
-  function updateAll(){ updateNet(); updateGrave(); updateFinal(); }
-
-  window.onload = ()=>{ populate(); updateAll(); };
+  window.onload=()=>{ populate(); updateAll(); };
 </script>
 </body>
 </html>
