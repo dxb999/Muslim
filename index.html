@@ -4,181 +4,89 @@
   <meta charset="UTF-8" />
   <title>ميزان أعمالي</title>
   <style>
-    body {
-      font-family: 'Tahoma';
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 { color: #2e7d32; }
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 30px;
-      flex-wrap: wrap;
-    }
-    .column {
-      background-color: white;
-      padding: 20px;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .column h2 { margin-top: 0; }
-    input, button, select {
-      padding: 8px;
-      margin: 5px;
-      width: 80%;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 15px 0;
-    }
-    li {
-      margin-bottom: 5px;
-      background-color: #e0f2f1;
-      padding: 8px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .summary {
-      margin-top: 30px;
-      font-size: 1.2em;
-      color: #333;
-    }
+    body{font-family:Tahoma,Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px;text-align:center}
+    h1{color:#2e7d32}
+
+    .container{display:flex;justify-content:center;gap:40px;margin-top:30px;flex-wrap:wrap}
+    .column{background:#fff;padding:20px;width:300px;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .column h2{margin-top:0}
+    input,button,select{padding:8px;margin:5px;width:80%}
+    ul{list-style:none;padding:0;margin:15px 0}
+    li{margin-bottom:5px;background:#e0f2f1;padding:8px;border-radius:5px;cursor:pointer}
+    .summary{margin-top:30px;font-size:1.2em;color:#333}
 
     /* تذكير */
-    .reminder-box {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      padding: 20px;
-      margin: 40px auto 20px;
-      width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .reminder-box button {
-      background-color: #ffc107;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    .reminder-box{background:#fff3cd;color:#856404;border:1px solid #ffeeba;padding:20px;margin:40px auto 20px;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .reminder-box button{background:#ffc107;border:none;padding:10px 20px;font-size:1em;border-radius:5px;cursor:pointer}
 
     /* عداد القبر */
-    .grave-meter-box {
-      background-color: #fdecea;
-      color: #611a15;
-      border: 1px solid #f5c6cb;
-      padding: 20px;
-      margin: 30px auto;
-      width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .progress-container {
-      background-color: #f8d7da;
-      border-radius: 20px;
-      overflow: hidden;
-      height: 25px;
-      margin: 10px 0;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: #dc3545;
-      transition: width 0.5s ease-in-out;
-    }
+    .grave-meter-box{background:#fdecea;color:#611a15;border:1px solid #f5c6cb;padding:20px;margin:30px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .progress-container{background:#f8d7da;border-radius:20px;overflow:hidden;height:25px;margin:10px 0}
+    .progress-bar{height:100%;width:0%;background:#dc3545;transition:width .5s}
+    .mitigation-box{background:#e9f3ff;color:#0f3b79;border:1px solid #cfe3ff;padding:20px;margin:30px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .miti-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .miti-buttons button{padding:10px 14px;border:none;border-radius:8px;background:#1976d2;color:#fff;cursor:pointer}
+    .miti-note{margin-top:8px;font-size:.95em}
 
-    /* التخفيف */
-    .mitigation-box{
-      background:#e9f3ff; color:#0f3b79; border:1px solid #cfe3ff;
-      padding:20px; margin:30px auto; width:80%;
-      border-radius:10px; box-shadow:0 0 10px #ccc;
-    }
-    .mitigation-box h2{ margin-top:0 }
-    .miti-buttons{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap }
-    .miti-buttons button{
-      padding:10px 14px; border:none; border-radius:8px; background:#1976d2; color:#fff; cursor:pointer;
-    }
-    .miti-note{ margin-top:8px; font-size:.95em }
-
-    /* الإنفوجرافيك (أسباب الجنة والنار) */
-    .infobox{
-      background:#ffffff;border:1px solid #eaeaea;color:#1b1b1b;
-      padding:20px;margin:30px auto;width:80%;
-      border-radius:10px;box-shadow:0 0 10px #ccc;text-align:center;
-    }
-    .infobox h2{margin:0 0 12px}
-    .infogrid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
-      gap:16px;justify-items:center;align-items:center;margin-top:10px;
-    }
-
-    /* بطاقة السبب بدائرة SVG */
-    .reason{
-      width:120px;height:140px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none
-    }
-    .ringwrap{position:relative;width:120px;height:120px}
-    .ringwrap .inner{
-      position:absolute;inset:28px;border-radius:50%;background:#fff;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;text-align:center;
-      box-shadow:0 2px 8px rgba(0,0,0,.06);
-    }
-    .inner .icon{font-size:24px;line-height:1}
-    .inner .label{font-size:12px;color:#333}
-    .inner .times{font-size:11px;color:#666}
-
-    .count{
-      position:absolute;bottom:-6px;right:-6px;background:#2e7d32;color:#fff;
-      font-size:11px;border-radius:12px;padding:2px 6px;box-shadow:0 2px 6px rgba(0,0,0,.15)
-    }
-    .bad .count{background:#dc3545}
-
-    /* SVG: سماكة 30 + تدرّج + لمعة */
-    .svg{transform:rotate(-90deg)}
+    /* --- كرامات يوم القيامة --- */
+    .day-honors{background:#fff;border:1px solid #eaeaea;padding:20px;margin:30px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .day-honors h2{margin:0 0 8px}
+    .honors-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;justify-items:center}
+    .honor-card{width:160px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .ringwrap{position:relative;width:140px;height:140px}
+    .inner{position:absolute;inset:28px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .inner .icon{font-size:26px}
+    .inner .title{font-size:14px;color:#222}
+    .inner .meta{font-size:12px;color:#666}
+    .help{position:absolute;top:-6px;left:-6px;background:#00000080;color:#fff;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;cursor:pointer}
+    .count-badge{position:absolute;bottom:-6px;right:-6px;background:#2e7d32;color:#fff;font-size:12px;border-radius:12px;padding:2px 6px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
     .track{stroke:#e5e5e5;stroke-width:30;fill:none}
-    .prog-good{stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(46,125,50,.6))}
-    .prog-bad {stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
+    .prog-good{stroke-width:30;fill:none;transition:stroke-dashoffset .35s;filter:drop-shadow(0 0 8px rgba(46,125,50,.6))}
+    .prog-bad {stroke-width:30;fill:none;transition:stroke-dashoffset .35s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
+    .svg{transform:rotate(-90deg)}
+
+    /* نافذة الشرح */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal.active{display:flex}
+    .modal .card{background:#fff;max-width:520px;width:100%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);text-align:right}
+    .modal header{padding:12px 16px;border-bottom:1px solid #eee;font-weight:bold}
+    .modal .content{padding:14px 16px;line-height:1.7;color:#222}
+    .modal footer{padding:12px 16px;border-top:1px solid #eee;text-align:left}
+    .modal button{padding:8px 14px;border-radius:8px;border:none;background:#2e7d32;color:#fff;cursor:pointer}
+
+    /* إنفوجرافيك الأسباب (قسمان) */
+    .infobox{background:#fff;border:1px solid #eaeaea;color:#1b1b1b;padding:20px;margin:22px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    @media(max-width:820px){.two-cols{grid-template-columns:1fr}}
+    .infosec{border:1px dashed #ebebeb;border-radius:10px;padding:12px}
+    .infosec h3{margin:0 0 10px}
+    .infogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;justify-items:center}
+
+    /* الدوائر للأسباب */
+    .reason{width:140px;height:170px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none}
+    .ringwrap .reason-inner{position:absolute;inset:28px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .reason .icon{font-size:30px;line-height:1}
+    .reason .title{font-size:14px;color:#222}
+    .reason .times{font-size:12px;color:#666}
+    .count{position:absolute;bottom:-8px;right:-8px;background:#2e7d32;color:#fff;font-size:12px;border-radius:14px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+    .bad .count{background:#dc3545}
+    .track-r{stroke:#e5e5e5;stroke-width:30;fill:none}
+    .prog-good-r{stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(46,125,50,.6))}
+    .prog-bad-r {stroke-width:30;fill:none;transition:stroke-dashoffset .25s;filter:drop-shadow(0 0 8px rgba(220,53,69,.6))}
+    .svg-r{transform:rotate(-90deg)}
 
     /* الجزاء النهائي */
-    .final-judgment-box {
-      background-color: #e8f5e9;
-      color: #1b5e20;
-      border: 1px solid #c8e6c9;
-      padding: 20px;
-      margin: 30px auto;
-      width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-    .judgment-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 20px 0;
-      gap: 30px;
-    }
-    .judgment-column { width: 100px; text-align: center; }
-    .judgment-meter {
-      width: 40px; height: 200px; background-color: #ddd;
-      border-radius: 20px; position: relative; overflow: hidden;
-    }
-    #judgmentIndicator {
-      position: absolute; width: 100%; height: 0%; bottom: 0;
-      background: linear-gradient(to top, #dc3545, #ffc107, #4caf50);
-      transition: height 0.5s ease-in-out;
-    }
+    .final-judgment-box{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9;padding:20px;margin:22px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
+    .judgment-container{display:flex;justify-content:center;align-items:center;margin:20px 0;gap:30px}
+    .judgment-column{width:100px;text-align:center}
+    .judgment-meter{width:40px;height:200px;background:#ddd;border-radius:20px;position:relative;overflow:hidden}
+    #judgmentIndicator{position:absolute;width:100%;height:0%;bottom:0;background:linear-gradient(to top,#dc3545,#ffc107,#4caf50);transition:height .45s}
   </style>
 </head>
 <body>
   <h1>📖 ميزان أعمالي</h1>
 
+  <!-- الحسنات / السيئات -->
   <div class="container">
     <div class="column" id="good">
       <h2>✅ الحسنات</h2>
@@ -197,9 +105,7 @@
     </div>
   </div>
 
-  <div class="summary">
-    ⚖️ الفارق = <span id="netResult">0</span> نقطة
-  </div>
+  <div class="summary">⚖️ الفارق = <span id="netResult">0</span> نقطة</div>
 
   <!-- تذكير -->
   <div class="reminder-box">
@@ -211,9 +117,7 @@
   <!-- عداد القبر -->
   <div class="grave-meter-box">
     <h2>📉 عداد عذاب القبر</h2>
-    <div class="progress-container">
-      <div id="graveProgress" class="progress-bar"></div>
-    </div>
+    <div class="progress-container"><div id="graveProgress" class="progress-bar"></div></div>
     <p id="graveLevel">المستوى: آمن</p>
   </div>
 
@@ -229,12 +133,25 @@
     <div id="mitigationNote" class="miti-note">كل خيار متاح مرة كل 24 ساعة.</div>
   </div>
 
-  <!-- الإنفوجرافيك: أسباب الجنة والنار -->
-  <div class="infobox" id="reasonsBox">
+  <!-- 🕊️ كرامات يوم القيامة (قبل أسباب الجنة والنار) -->
+  <div class="day-honors" id="honorsBox">
+    <h2>🕊️ كرامات يوم القيامة</h2>
+    <p style="color:#555;margin:6px 0 16px">تمثيل رمزي مبني على بياناتك هنا (للتذكير والتحفيز).</p>
+    <div class="honors-grid" id="honorsGrid"></div>
+  </div>
+
+  <!-- إنفوجرافيك: الجنة والنار -->
+  <div class="infobox">
     <h2>🧭 أسباب دخول الجنة والنار</h2>
-    <div class="infogrid" id="reasonsGrid"></div>
-    <div style="margin-top:8px;font-size:13px;color:#666">
-      اضغط على السبب لزيادة الأثر (حلقة دائرية). كل ضغطة تضيف نقاطها تلقائيًا.
+    <div class="two-cols">
+      <div class="infosec">
+        <h3>🌴 أسباب دخول الجنة</h3>
+        <div class="infogrid" id="reasonsGoodGrid"></div>
+      </div>
+      <div class="infosec">
+        <h3>🔥 أسباب دخول النار</h3>
+        <div class="infogrid" id="reasonsBadGrid"></div>
+      </div>
     </div>
   </div>
 
@@ -249,317 +166,356 @@
     <p id="judgmentResult">⬅️ يتم حساب المصير تلقائيًا حسب أعمالك...</p>
   </div>
 
-  <script>
-    let goodTotal = 0;
-    let badTotal  = 0;
+  <!-- نوافذ الشرح (Modal) -->
+  <div class="modal" id="modal"><div class="card">
+    <header id="modalTitle">شرح</header>
+    <div class="content" id="modalBody"></div>
+    <footer><button onclick="closeModal()">إغلاق</button></footer>
+  </div></div>
 
-    /* معاملات التخفيف */
-    const K_GOOD = 0.6; // وزن تأثير الحسنات
-    const MITIGATION_POINTS = { tawba:25, surahMulk:10, repayDebt:35, cutNamimah:20 };
-    let mitigationTotal = 0;
+<script>
+  /* =================== بيانات الميزان العامة =================== */
+  let goodTotal=0, badTotal=0;
 
-    function addEntry(type) {
-      const desc = document.getElementById(`${type}Desc`).value;
-      const points = parseInt(document.getElementById(`${type}Points`).value);
-      if (!desc || isNaN(points)) return;
+  /* معاملات التخفيف */
+  const K_GOOD=0.6;
+  const MITIGATION_POINTS={tawba:25,surahMulk:10,repayDebt:35,cutNamimah:20};
+  let mitigationTotal=0;
 
-      const list = document.getElementById(`${type}List`);
-      const li = document.createElement('li');
-      li.textContent = `${desc} (${points} نقطة)`;
-      li.onclick = () => {
-        list.removeChild(li);
-        if (type === 'good') {
-          goodTotal -= points;
-          document.getElementById('goodTotal').textContent = goodTotal;
-        } else {
-          badTotal -= points;
-          document.getElementById('badTotal').textContent = badTotal;
-        }
-        updateAll();
-      };
-      list.appendChild(li);
+  function addEntry(type){
+    const desc=document.getElementById(`${type}Desc`).value.trim();
+    const points=parseInt(document.getElementById(`${type}Points`).value);
+    if(!desc||isNaN(points))return;
 
-      if (type === 'good') {
-        goodTotal += points;
-        document.getElementById('goodTotal').textContent = goodTotal;
-      } else {
-        badTotal += points;
-        document.getElementById('badTotal').textContent = badTotal;
-      }
-
-      document.getElementById(`${type}Desc`).value = '';
-      document.getElementById(`${type}Points`).value = '';
-      updateAll();
-    }
-
-    function updateAll() {
-      updateNetResult();
-      updateGraveMeter();
-      autoUpdateFinalJudgment();
-    }
-
-    function updateNetResult() {
-      const net = goodTotal - badTotal;
-      document.getElementById('netResult').textContent = net;
-    }
-
-    function showReminder() {
-      const reminders = [
-        "كان عثمان بن عفان إذا ذُكر القبر بكى حتى تبتل لحيته.",
-        "القبر أول منازل الآخرة، فإن نجا منه فما بعده أيسر.",
-        "أكثروا من ذكر هادم اللذات: الموت.",
-        "اللهم قِنا عذاب القبر، وثبّتنا عند السؤال.",
-        "استعدوا للقبر، فإن الليل والنهار يعملان فيكم."
-      ];
-      const text = reminders[Math.floor(Math.random() * reminders.length)];
-      document.getElementById('reminderText').textContent = text;
-    }
-
-    /* التخفيف: مرة كل 24 ساعة لكل خيار */
-    function canUseMitigation(key){
-      const t = localStorage.getItem('miti_'+key);
-      if(!t) return true;
-      const hrs = (Date.now()-parseInt(t,10))/(1000*60*60);
-      return hrs >= 24;
-    }
-    function markMitigationUsed(key){
-      localStorage.setItem('miti_'+key, Date.now().toString());
-    }
-    function applyMitigation(key){
-      const note = document.getElementById('mitigationNote');
-      if(!MITIGATION_POINTS[key]) return;
-      if(!canUseMitigation(key)){
-        note.textContent = "⏳ هذا الخيار استُخدم خلال آخر 24 ساعة.";
-        return;
-      }
-      mitigationTotal += MITIGATION_POINTS[key];
-      markMitigationUsed(key);
-      note.textContent = "✅ تم تطبيق إجراء التخفيف. اثبت على الطاعة واترك أسباب الخطر.";
-      updateAll();
-    }
-
-    /* حساب خطر القبر (0..100) مع التخفيف */
-    function computeGraveRisk(){
-      let risk = badTotal - K_GOOD*goodTotal - mitigationTotal;
-      if(risk < 0) risk = 0;
-      if(risk > 100) risk = 100;
-      return Math.round(risk);
-    }
-
-    function updateGraveMeter() {
-      const levelText = document.getElementById("graveLevel");
-      const progressBar = document.getElementById("graveProgress");
-      const risk = computeGraveRisk(); // 0..100
-
-      progressBar.style.width = risk + "%";
-
-      let label = "آمن";
-      if (risk > 10 && risk <= 30) label = "تحذير بسيط";
-      else if (risk > 30 && risk <= 60) label = "خطر متوسط ⚠️";
-      else if (risk > 60 && risk < 90) label = "اقتراب من العذاب 😟";
-      else if (risk >= 90) label = "🔥 شديد الخطر – تب قبل فوات الأوان";
-
-      levelText.textContent = "المستوى: " + label;
-    }
-
-    function autoUpdateFinalJudgment() {
-      const result = document.getElementById("judgmentResult");
-      const indicator = document.getElementById("judgmentIndicator");
-      const net = goodTotal - badTotal;
-      let heightPercent = 50;
-
-      if (net > 100) { result.textContent = "🥇 أعمالك عظيمة، وجهتك الجنة بإذن الله!"; heightPercent = 100; }
-      else if (net > 50) { result.textContent = "🌿 مصيرك الجنة إن شاء الله، واصل الثبات."; heightPercent = 80; }
-      else if (net > 0) { result.textContent = "🤲 على الطريق، واصل العمل الصالح."; heightPercent = 65; }
-      else if (net === 0) { result.textContent = "⚖️ تعادل الحساب، فكن من المستغفرين."; heightPercent = 50; }
-      else if (net > -30) { result.textContent = "❗ خطر! راجع نفسك قبل فوات الأوان."; heightPercent = 35; }
-      else if (net > -70) { result.textContent = "🔥 تسارع نحو الخطر، بادر بالتوبة."; heightPercent = 20; }
-      else { result.textContent = "🚫 مصيرك النار إن لم تتب، اللهم سلم!"; heightPercent = 5; }
-
-      indicator.style.height = heightPercent + "%";
-    }
-
-    /* القوائم الجاهزة (كما في تصميمك) */
-    const goodActions = [
-      { text: "صلاة الفجر في وقتها", points: 20 },
-      { text: "الصدقة على محتاج", points: 15 },
-      { text: "قراءة القرآن", points: 10 },
-      { text: "بر الوالدين", points: 25 },
-      { text: "الابتسامة في وجه أخيك", points: 5 },
-      { text: "الاستغفار 100 مرة", points: 12 },
-      { text: "قيام الليل", points: 18 }
-    ];
-    const badActions = [
-      { text: "الكذب", points: 10 },
-      { text: "النميمة", points: 15 },
-      { text: "ترك الصلاة", points: 25 },
-      { text: "إيذاء الآخرين", points: 12 },
-      { text: "سماع الحرام", points: 8 },
-      { text: "نظر محرم", points: 7 },
-      { text: "الغيبة", points: 15 }
-    ];
-
-    function populateDropdowns() {
-      const goodSelect = document.createElement("select");
-      goodSelect.id = "goodSelect";
-      goodSelect.innerHTML = '<option value="">اختر عملًا حسنًا</option>';
-      goodActions.forEach(action => {
-        const option = document.createElement("option");
-        option.value = action.points;
-        option.textContent = `${action.text} (+${action.points})`;
-        goodSelect.appendChild(option);
-      });
-      const goodBtn = document.createElement("button");
-      goodBtn.textContent = "إضافة";
-      goodBtn.onclick = () => {
-        const selected = goodSelect.options[goodSelect.selectedIndex];
-        if (selected.value) {
-          document.getElementById("goodDesc").value = selected.textContent;
-          document.getElementById("goodPoints").value = selected.value;
-          addEntry('good');
-        }
-      };
-
-      const badSelect = document.createElement("select");
-      badSelect.id = "badSelect";
-      badSelect.innerHTML = '<option value="">اختر عملًا سيئًا</option>';
-      badActions.forEach(action => {
-        const option = document.createElement("option");
-        option.value = action.points;
-        option.textContent = `${action.text} (-${action.points})`;
-        badSelect.appendChild(option);
-      });
-      const badBtn = document.createElement("button");
-      badBtn.textContent = "إضافة";
-      badBtn.onclick = () => {
-        const selected = badSelect.options[badSelect.selectedIndex];
-        if (selected.value) {
-          document.getElementById("badDesc").value = selected.textContent;
-          document.getElementById("badPoints").value = selected.value;
-          addEntry('bad');
-        }
-      };
-
-      document.getElementById("good").appendChild(goodSelect);
-      document.getElementById("good").appendChild(goodBtn);
-      document.getElementById("bad").appendChild(badSelect);
-      document.getElementById("bad").appendChild(badBtn);
-    }
-
-    /* ==== إنفوجرافيك الأسباب — SVG بسماكة 30 + Gradient + Glow ==== */
-    const REASONS = [
-      // أسباب الجنة
-      { id:'iman',     type:'good', icon:'🕋', label:'الإيمان',        points:25 },
-      { id:'salah',    type:'good', icon:'🕌', label:'الصلاة',          points:20 },
-      { id:'birr',     type:'good', icon:'👨‍👩‍👧‍👦', label:'برّ الوالدين', points:18 },
-      { id:'sadaqa',   type:'good', icon:'🤝', label:'الصدقة',          points:15 },
-      { id:'siyam',    type:'good', icon:'🌙', label:'الصوم',           points:12 },
-      { id:'silah',    type:'good', icon:'🧬', label:'صلة الرحم',       points:12 },
-      // أسباب النار
-      { id:'kufr',     type:'bad',  icon:'🚫', label:'الكفر/الشرك',     points:40 },
-      { id:'tarkSalah',type:'bad',  icon:'⛔️', label:'ترك الصلاة',      points:30 },
-      { id:'uquq',     type:'bad',  icon:'💢', label:'عقوق الوالدين',   points:25 },
-      { id:'zina',     type:'bad',  icon:'⚠️', label:'الزنا',           points:35 },
-      { id:'riba',     type:'bad',  icon:'💸', label:'الربا',           points:25 },
-      { id:'namimahR', type:'bad',  icon:'🗣️', label:'النميمة',        points:15 }
-    ];
-    const reasonClicks = {}; REASONS.forEach(r=>reasonClicks[r.id]=0);
-
-    function gradientStops(type){
-      return type==='bad' ? ['#dc3545','#ff7043'] : ['#2e7d32','#66bb6a'];
-    }
-
-    function createReason(r){
-      const grid = document.getElementById('reasonsGrid');
-      const wrap = document.createElement('div');
-      wrap.className = 'reason ' + (r.type==='bad'?'bad':'good');
-      wrap.id = 'reason_'+r.id;
-
-      const ringwrap = document.createElement('div'); ringwrap.className='ringwrap';
-
-      // SVG إعداد
-      const size=120, r0=36, cx=size/2, cy=size/2, C=2*Math.PI*r0;
-      const gradId=`grad_${r.type}_${r.id}`;
-      const [c1,c2]=gradientStops(r.type);
-
-      ringwrap.innerHTML = `
-        <svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-          <defs>
-            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"  stop-color="${c1}"></stop>
-              <stop offset="100%" stop-color="${c2}"></stop>
-            </linearGradient>
-          </defs>
-          <circle class="track" cx="${cx}" cy="${cy}" r="${r0}"></circle>
-          <circle class="${r.type==='bad'?'prog-bad':'prog-good'}"
-                  id="prog_${r.id}"
-                  cx="${cx}" cy="${cy}" r="${r0}"
-                  stroke="url(#${gradId})"
-                  stroke-linecap="round"
-                  stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}"></circle>
-        </svg>
-      `;
-
-      const inner = document.createElement('div'); inner.className='inner';
-      inner.innerHTML = `
-        <div class="icon">${r.icon}</div>
-        <div class="label">${r.label}</div>
-        <div class="times"><span id="t_${r.id}">0</span>×</div>
-      `;
-
-      const badge = document.createElement('div'); badge.className='count'; badge.textContent='0×';
-
-      ringwrap.appendChild(inner);
-      ringwrap.appendChild(badge);
-      wrap.appendChild(ringwrap);
-
-      wrap.onclick = ()=> onReasonClick(r.id, C);
-
-      grid.appendChild(wrap);
-    }
-
-    function updateReasonVisual(id, C){
-      const c = reasonClicks[id];
-      const prog = document.getElementById('prog_'+id);
-      if(!prog) return;
-      const maxClicks = 5; // نفس منطقك السابق: كل ضغطة 20% (5 ضغطات = 100%)
-      const pct = Math.min(1, c / maxClicks);
-      const offset = C * (1 - pct);
-      prog.style.strokeDashoffset = offset;
-
-      const t = document.getElementById('t_'+id);
-      if(t) t.textContent = c;
-      const card = document.getElementById('reason_'+id);
-      if(card){ const b = card.querySelector('.count'); if(b) b.textContent = c+'×'; }
-    }
-
-    function onReasonClick(id, C){
-      const def = REASONS.find(x=>x.id===id);
-      if(!def) return;
-
-      reasonClicks[id] = (reasonClicks[id]||0) + 1;
-      if(def.type==='good'){ goodTotal += def.points; document.getElementById('goodTotal').textContent = goodTotal; }
-      else { badTotal += def.points; document.getElementById('badTotal').textContent = badTotal; }
-
-      updateReasonVisual(id, C);
-      updateAll();
-    }
-
-    function renderReasons(){
-      REASONS.forEach(def=>createReason(def));
-      // بعد الإنشاء الأولى: اضبط المؤشرات على 0
-      REASONS.forEach(def=>{
-        const size=120, r0=36, C=2*Math.PI*r0;
-        updateReasonVisual(def.id, C);
-      });
-    }
-
-    /* تشغيل */
-    window.onload = () => {
-      populateDropdowns();
-      renderReasons();
-      updateAll();
+    const list=document.getElementById(`${type}List`);
+    const li=document.createElement('li');
+    li.textContent=`${desc} (${points} نقطة)`;
+    li.onclick=()=>{list.removeChild(li); if(type==='good'){goodTotal-=points;} else {badTotal-=points;} // طرح النقاط
+      applyKeywordPoints(desc, -points, type); // عكس الزيادات الفئوية
+      refreshUI();
     };
-  </script>
+    list.appendChild(li);
+
+    if(type==='good'){goodTotal+=points;} else {badTotal+=points;}
+    applyKeywordPoints(desc, points, type); // نقاط فئوية بحسب الكلمات
+    document.getElementById('goodTotal').textContent=goodTotal;
+    document.getElementById('badTotal').textContent=badTotal;
+
+    document.getElementById(`${type}Desc`).value='';
+    document.getElementById(`${type}Points`).value='';
+    refreshUI();
+  }
+
+  function updateNetResult(){document.getElementById('netResult').textContent = goodTotal - badTotal;}
+
+  function showReminder(){
+    const reminders=[
+      "كان عثمان بن عفان إذا ذُكر القبر بكى حتى تبتل لحيته.",
+      "القبر أول منازل الآخرة، فإن نجا منه فما بعده أيسر.",
+      "أكثروا من ذكر هادم اللذات: الموت.",
+      "اللهم قِنا عذاب القبر، وثبّتنا عند السؤال.",
+      "استعدوا للقبر، فإن الليل والنهار يعملان فيكم."
+    ];
+    document.getElementById('reminderText').textContent=reminders[Math.floor(Math.random()*reminders.length)];
+  }
+
+  function canUseMitigation(k){const t=localStorage.getItem('miti_'+k); if(!t) return true; return ((Date.now()-parseInt(t,10))/(1000*60*60))>=24;}
+  function markMitigationUsed(k){localStorage.setItem('miti_'+k,Date.now().toString());}
+  function applyMitigation(k){
+    const note=document.getElementById('mitigationNote');
+    if(!MITIGATION_POINTS[k])return;
+    if(!canUseMitigation(k)){note.textContent="⏳ هذا الخيار استُخدم خلال آخر 24 ساعة.";return;}
+    mitigationTotal+=MITIGATION_POINTS[k]; markMitigationUsed(k);
+    note.textContent="✅ تم التخفيف. اثبت على الطاعة."; refreshUI();
+  }
+
+  function computeGraveRisk(){
+    let risk=badTotal - K_GOOD*goodTotal - mitigationTotal;
+    if(risk<0)risk=0; if(risk>100)risk=100; return Math.round(risk);
+  }
+  function updateGraveMeter(){
+    const risk=computeGraveRisk();
+    document.getElementById('graveProgress').style.width=risk+'%';
+    let label="آمن";
+    if(risk>10&&risk<=30)label="تحذير بسيط";
+    else if(risk>30&&risk<=60)label="خطر متوسط ⚠️";
+    else if(risk>60&&risk<90)label="اقتراب من العذاب 😟";
+    else if(risk>=90)label="🔥 شديد الخطر – تب قبل فوات الأوان";
+    document.getElementById('graveLevel').textContent='المستوى: '+label;
+  }
+
+  function autoUpdateFinalJudgment(){
+    const net=goodTotal-badTotal;
+    let h=50, txt="⚖️ تعادل الحساب، فكن من المستغفرين.";
+    if(net>100){h=100;txt="🥇 أعمالك عظيمة، وجهتك الجنة بإذن الله!";}
+    else if(net>50){h=80;txt="🌿 مصيرك الجنة إن شاء الله، واصل الثبات.";}
+    else if(net>0){h=65;txt="🤲 على الطريق، واصل العمل الصالح.";}
+    else if(net===0){h=50;txt="⚖️ تعادل الحساب، فكن من المستغفرين.";}
+    else if(net>-30){h=35;txt="❗ خطر! راجع نفسك قبل فوات الأوان.";}
+    else if(net>-70){h=20;txt="🔥 تسارع نحو الخطر، بادر بالتوبة.";}
+    else {h=5;txt="🚫 مصيرك النار إن لم تتب، اللهم سلم!";}
+    document.getElementById('judgmentIndicator').style.height=h+'%';
+    document.getElementById('judgmentResult').textContent=txt;
+  }
+
+  /* =================== إنفوجرافيك الأسباب (SVG 30 + Gradient + Glow) =================== */
+  const MAX_CLICKS=20; // تقدر تغيرها
+  const REASONS_GOOD=[
+    {id:'iman',icon:'🕋',label:'الإيمان',points:25},
+    {id:'salah',icon:'🕌',label:'الصلاة',points:20},
+    {id:'birr',icon:'👨‍👩‍👧‍👦',label:'برّ الوالدين',points:18},
+    {id:'sadaqa',icon:'🤝',label:'الصدقة',points:15},
+    {id:'siyam',icon:'🌙',label:'الصوم',points:12},
+    {id:'silah',icon:'🧬',label:'صلة الرحم',points:12}
+  ];
+  const REASONS_BAD=[
+    {id:'kufr',icon:'🚫',label:'الكفر/الشرك',points:40},
+    {id:'tarkSalah',icon:'⛔️',label:'ترك الصلاة',points:30},
+    {id:'uquq',icon:'💢',label:'عقوق الوالدين',points:25},
+    {id:'zina',icon:'⚠️',label:'الزنا',points:35},
+    {id:'riba',icon:'💸',label:'الربا',points:25},
+    {id:'namimahR',icon:'🗣️',label:'النميمة',points:15}
+  ];
+  const clicks={}; // id -> count
+  function gradientStops(type){return type==='bad'?['#dc3545','#ff7043']:['#2e7d32','#66bb6a'];}
+
+  function createReasonEl(r,type,grid){
+    clicks[r.id]=clicks[r.id]||0;
+    const size=140, r0=36, cx=size/2, cy=size/2, C=2*Math.PI*r0;
+    const gradId=`grad_${type}_${r.id}`;
+    const [c1,c2]=gradientStops(type);
+    const wrap=document.createElement('div'); wrap.className='reason '+(type==='bad'?'bad':'good'); wrap.id='reason_'+r.id;
+    const ringwrap=document.createElement('div'); ringwrap.className='ringwrap';
+    ringwrap.innerHTML=`
+      <svg class="svg-r" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        <defs><linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs>
+        <circle class="track-r" cx="${cx}" cy="${cy}" r="${r0}"></circle>
+        <circle class="${type==='bad'?'prog-bad-r':'prog-good-r'}" id="prog_${r.id}" cx="${cx}" cy="${cy}" r="${r0}"
+          stroke="url(#${gradId})" stroke-linecap="round" stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}"></circle>
+      </svg>`;
+    const inner=document.createElement('div'); inner.className='reason-inner';
+    inner.innerHTML=`<div class="icon">${r.icon}</div><div class="title">${r.label}</div><div class="times"><span id="t_${r.id}">0</span>×</div>`;
+    const count=document.createElement('div'); count.className='count'; count.textContent='0×';
+    ringwrap.appendChild(inner); ringwrap.appendChild(count); wrap.appendChild(ringwrap);
+
+    wrap.onclick=()=>{
+      if(clicks[r.id] >= MAX_CLICKS) return;
+      clicks[r.id]++; const pct=clicks[r.id]/MAX_CLICKS; const offset=C*(1-pct);
+      document.getElementById('prog_'+r.id).style.strokeDashoffset=offset;
+      document.getElementById('t_'+r.id).textContent=clicks[r.id]; count.textContent=clicks[r.id]+'×';
+      if(type==='good'){ goodTotal+=r.points; } else { badTotal+=r.points; }
+      document.getElementById('goodTotal').textContent=goodTotal;
+      document.getElementById('badTotal').textContent=badTotal;
+      bumpCategoryByReason(r); // تحديث فئات للمقاييس
+      refreshUI();
+    };
+
+    grid.appendChild(wrap);
+    // مبدئيًا صفر
+    document.getElementById('goodTotal').textContent=goodTotal;
+    document.getElementById('badTotal').textContent=badTotal;
+  }
+
+  function renderReasons(){
+    const gGrid=document.getElementById('reasonsGoodGrid');
+    const bGrid=document.getElementById('reasonsBadGrid');
+    REASONS_GOOD.forEach(r=>createReasonEl(r,'good',gGrid));
+    REASONS_BAD.forEach(r=>createReasonEl(r,'bad',bGrid));
+  }
+
+  /* =================== قوائم جاهزة للإضافة =================== */
+  const goodActions=[{text:"صلاة الفجر في وقتها",points:20},{text:"الصدقة على محتاج",points:15},{text:"قراءة القرآن",points:10},{text:"بر الوالدين",points:25},{text:"الابتسامة في وجه أخيك",points:5},{text:"الاستغفار 100 مرة",points:12},{text:"قيام الليل",points:18},{text:"الصلاة على النبي ﷺ 100 مرة",points:12}];
+  const badActions=[{text:"الكذب",points:10},{text:"النميمة",points:15},{text:"ترك الصلاة",points:25},{text:"إيذاء الآخرين",points:12},{text:"سماع الحرام",points:8},{text:"نظر محرم",points:7},{text:"الغيبة",points:15}];
+
+  function populateDropdowns(){
+    const goodSelect=document.createElement("select"); goodSelect.id="goodSelect"; goodSelect.innerHTML='<option value="">اختر عملًا حسنًا</option>';
+    goodActions.forEach(a=>{const o=document.createElement("option"); o.value=a.points; o.textContent=`${a.text} (+${a.points})`; goodSelect.appendChild(o);});
+    const goodBtn=document.createElement("button"); goodBtn.textContent="إضافة"; goodBtn.onclick=()=>{const s=goodSelect.options[goodSelect.selectedIndex]; if(s.value){document.getElementById("goodDesc").value=s.textContent; document.getElementById("goodPoints").value=s.value; addEntry('good');}};
+    const badSelect=document.createElement("select"); badSelect.id="badSelect"; badSelect.innerHTML='<option value="">اختر عملًا سيئًا</option>';
+    badActions.forEach(a=>{const o=document.createElement("option"); o.value=a.points; o.textContent=`${a.text} (-${a.points})`; badSelect.appendChild(o);});
+    const badBtn=document.createElement("button"); badBtn.textContent="إضافة"; badBtn.onclick=()=>{const s=badSelect.options[badSelect.selectedIndex]; if(s.value){document.getElementById("badDesc").value=s.textContent; document.getElementById("badPoints").value=s.value; addEntry('bad');}};
+    document.getElementById("good").appendChild(goodSelect); document.getElementById("good").appendChild(goodBtn);
+    document.getElementById("bad").appendChild(badSelect); document.getElementById("bad").appendChild(badBtn);
+  }
+
+  /* =================== مقاييس تفصيلية (لتغذية كرامات يوم القيامة) =================== */
+  const Metrics={
+    charity:0,   // الصدقة
+    quran:0,     // قراءة/حفظ القرآن
+    salah:0,     // الصلاة/الالتزام
+    iman:0,      // الإيمان/التوحيد (رمزيًا من الدائرة)
+    birr:0,      // بر الوالدين
+    siyam:0,     // الصوم
+    silah:0,     // صلة الرحم
+    salawat:0,   // الصلاة على النبي ﷺ
+    dhikr:0      // الذكر/الاستغفار
+  };
+
+  function bumpCategoryByReason(r){
+    if(r.id==='sadaqa') Metrics.charity += r.points;
+    if(r.id==='salah')  Metrics.salah   += r.points;
+    if(r.id==='iman')   Metrics.iman    += r.points;
+    if(r.id==='birr')   Metrics.birr    += r.points;
+    if(r.id==='siyam')  Metrics.siyam   += r.points;
+    if(r.id==='silah')  Metrics.silah   += r.points;
+  }
+
+  // التقاط كلمات مفتاحية من الإدخال اليدوي لتغذية المقاييس
+  function applyKeywordPoints(desc, points, type){
+    const isGood = (type==='good');
+    const P = isGood ? points : -points; // السيئة تخصم
+    const d = desc.replace(/\s+/g,'');
+    if(/صدقة|تصدق/.test(d)) Metrics.charity += P;
+    if(/قرآن|تحفيظ|حفظ|تلاوة/.test(d)) Metrics.quran += P;
+    if(/صلاةعلىالنبي|صلعلىالنبي|الصلاةعلىالنبي/.test(d)) Metrics.salawat += P;
+    if(/استغفار|ذكر|تسبيح|تهليل|تحميد/.test(d)) Metrics.dhikr += P;
+    if(/صلاة|مسجد|قيام/.test(d)) Metrics.salah += P;
+    if(/إحسانلل|بر/.test(d)) Metrics.birr += P;
+    if(/صوم|صيام/.test(d)) Metrics.siyam += P;
+    if(/صلةالرحم|زيارةأقارب/.test(d)) Metrics.silah += P;
+    if(/إيمان|توحيد/.test(d)) Metrics.iman += P;
+  }
+
+  /* =================== كرامات يوم القيامة =================== */
+  const Honors = [
+    {
+      id:'shadeThrone', type:'good', icon:'🌤️',
+      title:'الظل تحت العرش',
+      explain:`سبعة يظلهم الله في ظله يوم لا ظل إلا ظله (إمام عادل، شاب نشأ في عبادة الله، قلبه معلق بالمساجد، متحابان في الله، من دعته امرأة فرفض، متصدق أخفى صدقته، ذاكر لله خاليًا ففاضت عيناه). هنا مؤشر تقريبي يتدرج بتحقق جملة من هذه المعاني عبر أعمالك.`,
+      compute: ()=>{
+        let axes = 0;
+        if(Metrics.salah >= 40) axes++;       // تعلق بالمساجد (تقريبي)
+        if(Metrics.charity >= 40) axes++;     // متصدق
+        if(Metrics.iman >= 25) axes++;        // أصل الإيمان
+        if(Metrics.birr >= 18) axes++;        // إحسان وبر
+        if(Metrics.siyam >= 24) axes++;       // مجاهدة النفس
+        if((badClicks('zina')===0)) axes++;   // عفة
+        const totalAxes = 6;                  // تمثيل تقريبي
+        return Math.min(1, axes/totalAxes);
+      }
+    },
+    {
+      id:'charityShade', type:'good', icon:'🕯️',
+      title:'المرء في ظل صدقته',
+      explain:`يتقوى ظلّك بقدر صدقتك. كلما زادت الصدقة الصادقة، كثر ظلّك. هنا نعرض تدرّجًا رمزيًا يرتفع مع مجموع نقاط الصدقة.`,
+      compute: ()=> Math.min(1, Metrics.charity / 100)
+    },
+    {
+      id:'crownQuran', type:'good', icon:'👑',
+      title:'تاج الوقار',
+      explain:`ورد أن والدي حافظ القرآن يُكسَيان تاج الوقار ولباس الكرامة. نعرض مقياسًا رمزيًا يتدرج بقدر ارتباطك بالقرآن (تلاوة/حفظ/عمل)، ويزداد لمعانه مع برّ الوالدين.`,
+      compute: ()=>{
+        let v = Metrics.quran / 200; // الأساس
+        if(Metrics.birr>0) v += 0.1; // لمعة إضافية بالبر
+        return Math.min(1, v);
+      }
+    },
+    {
+      id:'shafaa', type:'good', icon:'🤲',
+      title:'الشفاعة',
+      explain:`الشفاعة بإذن الله أنواعٌ أعظمها للنبي ﷺ. هذا المؤشر الرمزي يتدرّج مع قوة الإيمان وصلاح العمل العام (صافي الميزان).`,
+      compute: ()=>{
+        const net = goodTotal - badTotal;
+        let v = (Metrics.iman/50)*0.6 + (net>50?0.4:0);
+        return Math.max(0, Math.min(1, v));
+      }
+    },
+    {
+      id:'hawd', type:'good', icon:'🏞️',
+      title:'الحوض والكوثر',
+      explain:`الوِرد على حوض النبي ﷺ كرامة لأتباعه. هنا نقرّب المؤشر بحسب الالتزام بالصلاة ودوام الصلاة على النبي ﷺ.`,
+      compute: ()=> {
+        let v = (Metrics.salah/60) * 0.6 + (Metrics.salawat/100) * 0.4;
+        return Math.min(1, v);
+      }
+    },
+    {
+      id:'siratLight', type:'good', icon:'💡',
+      title:'نور الصراط',
+      explain:`يمضي الناس على الصراط على قدر نورهم، ونور المؤمن بإيمانه وأعماله. نقرّب المؤشر بحسب الإيمان والصلاة والذكر.`,
+      compute: ()=> Math.min(1, (Metrics.iman + Metrics.salah + Metrics.dhikr) / 200)
+    }
+  ];
+
+  function badClicks(id){ return clicks[id] || 0; }
+
+  function createHonorCard(h){
+    const grid = document.getElementById('honorsGrid');
+    const size=140, r0=36, cx=size/2, cy=size/2, C=2*Math.PI*r0;
+    const gradId=`hgrad_${h.id}`;
+    const [c1,c2]=gradientStops(h.type||'good');
+
+    const card=document.createElement('div'); card.className='honor-card'; card.id='hon_'+h.id;
+    const ringwrap=document.createElement('div'); ringwrap.className='ringwrap';
+
+    ringwrap.innerHTML=`
+      <svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        <defs>
+          <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="${c1}"></stop>
+            <stop offset="100%" stop-color="${c2}"></stop>
+          </linearGradient>
+        </defs>
+        <circle class="track" cx="${cx}" cy="${cy}" r="${r0}"></circle>
+        <circle class="prog-good" id="hprog_${h.id}" cx="${cx}" cy="${cy}" r="${r0}"
+          stroke="url(#${gradId})" stroke-linecap="round"
+          stroke-dasharray="${C} ${C}" stroke-dashoffset="${C}"></circle>
+      </svg>
+    `;
+
+    const inner=document.createElement('div'); inner.className='inner';
+    inner.innerHTML=`<div class="icon">${h.icon}</div><div class="title">${h.title}</div><div class="meta" id="hmeta_${h.id}">0%</div>`;
+    const help=document.createElement('div'); help.className='help'; help.textContent='?'; help.onclick=()=>openModal(h.title,h.explain);
+    const badge=document.createElement('div'); badge.className='count-badge'; badge.textContent='—';
+
+    ringwrap.appendChild(inner); ringwrap.appendChild(help); ringwrap.appendChild(badge);
+    card.appendChild(ringwrap);
+    grid.appendChild(card);
+
+    // خزن قيم ثابتة للاستخدام عند التحديث
+    card._C = C; card._badge = badge;
+  }
+
+  function updateHonorCard(h){
+    const card = document.getElementById('hon_'+h.id);
+    if(!card) return;
+    const C = card._C;
+    const v = Math.max(0, Math.min(1, h.compute())); // 0..1
+    const offset = C * (1 - v);
+    document.getElementById('hprog_'+h.id).style.strokeDashoffset = offset;
+    document.getElementById('hmeta_'+h.id).textContent = Math.round(v*100) + '%';
+    // شارة بسيطة تعرض صافي الميزان أو قيمة مرتبطة:
+    card._badge.textContent = (h.id==='shafaa') ? (goodTotal - badTotal) + ' صافي' :
+                              (h.id==='charityShade') ? Math.round(Metrics.charity) + ' صدقة' :
+                              (h.id==='crownQuran') ? Math.round(Metrics.quran) + ' قرآن' :
+                              (h.id==='hawd') ? (Math.round(Metrics.salawat) + ' ﷺ') :
+                              '✓';
+  }
+
+  function renderHonors(){
+    Honors.forEach(h=>createHonorCard(h));
+    updateHonors();
+  }
+  function updateHonors(){ Honors.forEach(h=>updateHonorCard(h)); }
+
+  /* =================== تحديث شامل للواجهة =================== */
+  function refreshUI(){
+    updateNetResult();
+    updateGraveMeter();
+    autoUpdateFinalJudgment();
+    updateHonors();
+  }
+
+  /* =================== تشغيل =================== */
+  window.onload=()=>{ populateDropdowns(); renderReasons(); renderHonors(); refreshUI(); };
+
+  /* =================== نافذة الشرح =================== */
+  function openModal(title, body){
+    document.getElementById('modalTitle').textContent=title;
+    document.getElementById('modalBody').textContent=body;
+    document.getElementById('modal').classList.add('active');
+  }
+  function closeModal(){ document.getElementById('modal').classList.remove('active'); }
+</script>
 </body>
 </html>
