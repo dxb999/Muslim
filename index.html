@@ -26,25 +26,36 @@
     .miti-buttons button{padding:10px 14px;border:none;border-radius:8px;background:#1976d2;color:#fff;cursor:pointer}
     .miti-note{margin-top:8px;font-size:.95em}
 
-    /* إنفوجرافيك الأسباب – قسمان منفصلان */
+    /* الإنفوجرافيك (قسمان منفصلان) */
     .infobox{background:#fff;border:1px solid #eaeaea;color:#1b1b1b;padding:20px;margin:30px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc;text-align:center}
     .infobox h2{margin:0 0 12px}
     .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
     @media(max-width:820px){.two-cols{grid-template-columns:1fr}}
     .infosec{border:1px dashed #e5e5e5;border-radius:10px;padding:12px}
     .infosec h3{margin:0 0 10px}
-    .infogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:16px;justify-items:center;align-items:center}
-    .reason{width:90px;height:110px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none}
-    .ringwrap{position:relative;width:90px;height:90px}
+    .infogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:16px;justify-items:center;align-items:center}
+
+    /* دائرة السبب: الحلقة + المحتوى كله داخل الدائرة */
+    .reason{width:110px;height:130px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none}
+    .ringwrap{position:relative;width:110px;height:110px}
+    .ringwrap .inner{
+      position:absolute;inset:10px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;text-align:center
+    }
+    .inner .icon{font-size:22px;line-height:1}
+    .inner .title{font-size:12px;color:#222;margin-top:4px}
+    .inner .times{font-size:11px;color:#666;margin-top:2px}
+
+    /* عدّاد صغير */
     .count{position:absolute;bottom:-6px;right:-6px;background:#2e7d32;color:#fff;font-size:11px;border-radius:12px;padding:2px 6px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
     .bad .count{background:#dc3545}
-    .label{font-size:12px;color:#333}
-    /* SVG دائرة التقدم */
+
+    /* SVG الحلقة */
     .svg{transform:rotate(-90deg)}
-    .track{stroke:#ddd;stroke-width:8;fill:none}
-    .prog{stroke:#2e7d32;stroke-width:8;fill:none;transition:stroke-dasharray .25s ease}
+    .track{stroke:#ddd;stroke-width:10;fill:none}
+    .prog{stroke:#2e7d32;stroke-width:10;fill:none;transition:stroke-dasharray .25s ease}
     .bad .prog{stroke:#dc3545}
 
+    /* الجزاء النهائي */
     .final-judgment-box{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9;padding:20px;margin:30px auto;width:80%;border-radius:10px;box-shadow:0 0 10px #ccc}
     .judgment-container{display:flex;justify-content:center;align-items:center;margin:20px 0;gap:30px}
     .judgment-column{width:100px;text-align:center}
@@ -98,7 +109,7 @@
     <div id="mitigationNote" class="miti-note">كل خيار متاح مرة كل 24 ساعة.</div>
   </div>
 
-  <!-- إنفوجرافيك مفصول -->
+  <!-- الإنفوجرافيك المقسوم: داخل الدائرة أيقونة + عنوان + عدّاد -->
   <div class="infobox">
     <h2>🧭 أسباب دخول الجنة والنار</h2>
     <div class="two-cols">
@@ -193,7 +204,8 @@
       document.getElementById('judgmentResult').textContent=txt;
     }
 
-    /* إنفوجرافيك بــ SVG (مقسم قسمين) */
+    /* الإنفوجرافيك بــ SVG (مقسوم لجنة/نار) — محتوى داخل الدائرة */
+    const MAX_CLICKS = 20; // كما طلبت: 20 ضغطة (كل ضغطة 5%)
     const REASONS_GOOD=[
       {id:'iman',icon:'🕋',label:'الإيمان',points:25},
       {id:'salah',icon:'🕌',label:'الصلاة',points:20},
@@ -210,64 +222,70 @@
       {id:'riba',icon:'💸',label:'الربا',points:25},
       {id:'namimahR',icon:'🗣️',label:'النميمة',points:15}
     ];
-    const clicks={}; // لكل سبب
+    const clicks={}; // عدد الضغطات لكل سبب
 
-    function renderReason(gridId, items, type){
-      const grid=document.getElementById(gridId);
-      items.forEach(r=>{
-        clicks[r.id]=0;
-        const wrap=document.createElement('div');
-        wrap.className='reason '+(type==='bad'?'bad':'good');
-        wrap.id='reason_'+r.id;
+    function createReasonEl(r, type, grid){
+      clicks[r.id]=0;
 
-        // SVG progress
-        const size=90, r0=32, cx=size/2, cy=size/2;
-        const C=2*Math.PI*r0;
+      // إعداد SVG
+      const size=110, r0=40, cx=size/2, cy=size/2, C=2*Math.PI*r0;
 
-        const ringwrap=document.createElement('div'); ringwrap.className='ringwrap';
-        ringwrap.innerHTML=`<svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-            <circle class="track" cx="${cx}" cy="${cy}" r="${r0}"></circle>
-            <circle class="prog"  id="prog_${r.id}" cx="${cx}" cy="${cy}" r="${r0}" stroke-dasharray="0 ${C}" stroke-linecap="round"></circle>
-          </svg>`;
-        ringwrap.dataset.circ=C;
+      const wrap=document.createElement('div');
+      wrap.className='reason '+(type==='bad'?'bad':'good');
+      wrap.id='reason_'+r.id;
 
-        const count=document.createElement('div'); count.className='count'; count.textContent='0×';
-        ringwrap.appendChild(count);
+      const ringwrap=document.createElement('div'); ringwrap.className='ringwrap';
+      ringwrap.innerHTML=`
+        <svg class="svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <circle class="track" cx="${cx}" cy="${cy}" r="${r0}"></circle>
+          <circle class="prog" id="prog_${r.id}" cx="${cx}" cy="${cy}" r="${r0}"
+                  stroke-dasharray="0 ${C}" stroke-linecap="round"></circle>
+        </svg>
+      `;
 
-        const label=document.createElement('div'); label.className='label'; label.textContent=r.icon+' '+r.label;
+      const inner=document.createElement('div'); inner.className='inner';
+      inner.innerHTML=`
+        <div class="icon">${r.icon}</div>
+        <div class="title">${r.label}</div>
+        <div class="times"><span id="t_${r.id}">0</span>×</div>
+      `;
 
-        wrap.appendChild(ringwrap);
-        wrap.appendChild(label);
-        wrap.onclick=()=>onReasonClick(r, type, C);
-        grid.appendChild(wrap);
-      });
-    }
+      const count=document.createElement('div'); count.className='count'; count.textContent='0×';
 
-    function onReasonClick(r, type, C){
-      // حد أقصى 5 ضغطات لكل سبب (يمكن تغييره)
-      if(clicks[r.id] >= 5) return;
-      clicks[r.id]++;
+      ringwrap.appendChild(inner);
+      ringwrap.appendChild(count);
 
-      // تحديث الدائرة
-      const pct = clicks[r.id]*20; // 0..100
-      const dash = (pct/100)*C;
-      const prog = document.getElementById('prog_'+r.id);
-      prog.setAttribute('stroke-dasharray', `${dash} ${C-dash}`);
+      wrap.appendChild(ringwrap);
 
-      // تحديث الرقم
-      const countEl = document.querySelector('#reason_'+r.id+' .count');
-      countEl.textContent = clicks[r.id]+'×';
+      wrap.onclick=()=>{
+        if(clicks[r.id] >= MAX_CLICKS) return;    // حد أقصى 20
+        clicks[r.id]++;
 
-      // نقاط الميزان
-      if(type==='good'){ goodTotal+=r.points; document.getElementById('goodTotal').textContent=goodTotal; }
-      else { badTotal+=r.points; document.getElementById('badTotal').textContent=badTotal; }
+        // تقدّم الحلقة
+        const pct = (clicks[r.id]/MAX_CLICKS)*100; // 0..100
+        const dash = (pct/100)*C;
+        const prog = document.getElementById('prog_'+r.id);
+        prog.setAttribute('stroke-dasharray', `${dash} ${C-dash}`);
 
-      updateAll();
+        // الأرقام داخل الدائرة والصغيرة
+        document.getElementById('t_'+r.id).textContent = clicks[r.id];
+        count.textContent = clicks[r.id]+'×';
+
+        // نقاط الميزان
+        if(type==='good'){ goodTotal += r.points; document.getElementById('goodTotal').textContent=goodTotal; }
+        else { badTotal  += r.points; document.getElementById('badTotal').textContent = badTotal; }
+
+        updateAll();
+      };
+
+      grid.appendChild(wrap);
     }
 
     function renderReasons(){
-      renderReason('reasonsGoodGrid', REASONS_GOOD, 'good');
-      renderReason('reasonsBadGrid',  REASONS_BAD,  'bad');
+      const gGrid=document.getElementById('reasonsGoodGrid');
+      const bGrid=document.getElementById('reasonsBadGrid');
+      REASONS_GOOD.forEach(r=>createReasonEl(r,'good',gGrid));
+      REASONS_BAD.forEach(r=>createReasonEl(r,'bad',bGrid));
     }
 
     /* تشغيل */
